@@ -3,6 +3,8 @@ package ccm
 import (
 	"encoding/json"
 	"errors"
+	"github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
+    clb "github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
 	"io"
 	"io/ioutil"
 	"os"
@@ -37,13 +39,13 @@ func NewCloud(config io.Reader) (cloudprovider.Interface, error) {
 	}
 
 	if c.Region == "" {
-		c.Region = os.Getenv("CDSCLOUD_CLOUD_CONTROLLER_MANAGER_REGION")
+		c.Region = os.Getenv("API_HOST")
 	}
 	if c.SecretId == "" {
-		c.SecretId = os.Getenv("CDSCLOUD_CLOUD_CONTROLLER_MANAGER_SECRET_ID")
+		c.SecretId = os.Getenv("ACCESS_KEY_ID")
 	}
 	if c.SecretKey == "" {
-		c.SecretKey = os.Getenv("CDSCLOUD_CLOUD_CONTROLLER_MANAGER_SECRET_KEY")
+		c.SecretKey = os.Getenv("ACCESS_KEY_SECRET")
 	}
 
 	return &Cloud{config: c}, nil
@@ -53,6 +55,8 @@ type Cloud struct {
 	config Config
 
 	kubeClient kubernetes.Interface
+
+	clb   *clb.Client
 }
 
 type Config struct {
@@ -67,6 +71,14 @@ type Config struct {
 // to perform housekeeping activities within the cloud provider.
 func (cloud *Cloud) Initialize(clientBuilder controller.ControllerClientBuilder) {
 	cloud.kubeClient = clientBuilder.ClientOrDie("cdscloud-cloud-provider")
+	clbClient, err := clb.NewClient(
+		common.Credential{SecretId: cloud.config.SecretId, SecretKey: cloud.config.SecretKey},
+		common.Opts{Region: cloud.config.Region},
+	)
+	if err != nil {
+		panic(err)
+	}
+	cloud.clb = clbClient
 	return
 }
 
