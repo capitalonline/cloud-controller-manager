@@ -7,4 +7,4 @@ FROM alpine:3.6
 RUN apk update --no-cache && apk add ca-certificates
 COPY --from=build-env /cdscloud-controller-manager /cdscloud-controller-manager
 
-ENTRYPOINT ["/cloud-controller-manager"]
+ENTRYPOINT ["/cdscloud-controller-manager"]
