@@ -3,27 +3,23 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
-	"time"
+
 
 	"github.com/spf13/pflag"
 
-	utilflag "k8s.io/apiserver/pkg/util/flag"
-	"k8s.io/apiserver/pkg/util/logs"
+	cliFlag "k8s.io/component-base/cli/flag"
+	"k8s.io/component-base/logs"
+	_ "k8s.io/component-base/metrics/prometheus/clientgo" // load all the prometheus client-go plugins
+	_ "k8s.io/component-base/metrics/prometheus/version"  // for version metric registration
 	"k8s.io/kubernetes/cmd/cloud-controller-manager/app"
-	_ "k8s.io/kubernetes/pkg/client/metrics/prometheus"
-	_ "k8s.io/kubernetes/pkg/version/prometheus"
 )
 
 func main() {
-	rand.Seed(time.Now().UTC().UnixNano())
-
 	command := app.NewCloudControllerManagerCommand()
 
-	pflag.CommandLine.SetNormalizeFunc(utilflag.WordSepNormalizeFunc)
+	pflag.CommandLine.SetNormalizeFunc(cliFlag.WordSepNormalizeFunc)
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-
 	logs.InitLogs()
 	defer logs.FlushLogs()
 
