@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	ProviderName string = "cdstcloud"
+	ProviderName string = "cdscloud"
 )
 
 var (
