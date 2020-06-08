@@ -3,6 +3,8 @@ RUN apk update && apk add git make
 COPY . /go/src/github.com/capitalonline/cdscloud-controller-manager
 RUN cd /go/src/github.com/capitalonline/cdscloud-controller-manager && make container-binary
 
+FROM alpine:3.6
+RUN apk update --no-cache && apk add ca-certificates
 COPY --from=build-env /cdscloud-controller-manager /cdscloud-controller-manager
 
 ENTRYPOINT ["/cloud-controller-manager"]
