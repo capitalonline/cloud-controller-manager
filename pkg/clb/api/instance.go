@@ -1,15 +1,6 @@
-package cmd
+package api
 
 import "time"
-
-type DescribeInstancesArgs struct {
-	Version     string    `qcloud_arg:"Version,required"`
-	InstanceIds *[]string `qcloud_arg:"InstanceIds"`
-	//LanIps      *[]string `qcloud_arg:"lanIps"`
-	Filters     *[]Filter `qcloud_arg:"Filters"`
-	Offset      *int      `qcloud_arg:"Offset"`
-	Limit       *int      `qcloud_arg:"Limit"`
-}
 
 type Filter struct {
 	Name   string        `qcloud_arg:"Name"`
@@ -20,6 +11,14 @@ type CvmResponse struct {
 	Response interface{} `json:"Response"`
 }
 
+type DescribeInstancesArgs struct {
+	Version     string    `qcloud_arg:"Version,required"`
+	InstanceIds *[]string `qcloud_arg:"InstanceIds"`
+	//LanIps      *[]string `qcloud_arg:"lanIps"`
+	Filters     *[]Filter `qcloud_arg:"Filters"`
+	Offset      *int      `qcloud_arg:"Offset"`
+	Limit       *int      `qcloud_arg:"Limit"`
+}
 type DescribeInstancesResponse struct {
 	TotalCount  int            `json:"TotalCount"`
 	InstanceSet []InstanceInfo `json:"InstanceSet"`

@@ -1,14 +1,16 @@
-package cmd
+package api
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 )
 
 func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalancersResponse, error) {
+	log.Infof("api:: DescribeLoadBalancers, args is: +v", args)
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -29,6 +31,7 @@ func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalanc
 }
 
 func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResponse, error) {
+	log.Infof("api:: CreateLoadBalancers, args is: %+v", args)
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -49,6 +52,7 @@ func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResp
 }
 
 func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResponse, error) {
+	log.Infof("api:: UpdateLoadBalancers, args is: %+v", args)
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -69,6 +73,7 @@ func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResp
 }
 
 func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersResponse, error) {
+	log.Infof("api:: DeleteLoadBalancers, args is: %+v", args)
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -108,6 +113,7 @@ func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) 
 }
 
 func DescribeInstances(args *DescribeInstancesArgs) (*DescribeInstancesResponse, error) {
+	log.Infof("api:: DescribeInstances, args is: %+v", args)
 	params := map[string]string {
 		"task_id": args.RequesetId,
 	}
@@ -122,48 +128,6 @@ func DescribeInstances(args *DescribeInstancesArgs) (*DescribeInstancesResponse,
 	}
 
 	res := &DescribeInstancesResponse{}
-	err = json.Unmarshal(content, res)
-	return res, err
-}
-
-func RegisterInstancesWithLoadBalancer(args *RegisterInstancesWithLoadBalancerArgs)(*RegisterInstancesWithLoadBalancerResponse, error) {
-	params := map[string]string {
-		"cluster_name": args.ClusterName,
-		"name": args.LoadBalancerName,
-		"backends": args.Backends,
-	}
-	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, params, nil)
-	response, err := common.DoRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	content, err := ioutil.ReadAll(response.Body)
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
-	}
-
-	res := &RegisterInstancesWithLoadBalancerResponse{}
-	err = json.Unmarshal(content, res)
-	return res, err
-}
-
-func DeRegisterInstancesWithLoadBalancer(args *DeRegisterInstancesWithLoadBalancerArgs)(*DeRegisterInstancesWithLoadBalancerResponse, error) {
-	params := map[string]string {
-		"cluster_name": args.ClusterName,
-		"name": args.LoadBalancerName,
-		"backends": args.Backends,
-	}
-	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, params, nil)
-	response, err := common.DoRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	content, err := ioutil.ReadAll(response.Body)
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
-	}
-
-	res := &DeRegisterInstancesWithLoadBalancerResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
 }

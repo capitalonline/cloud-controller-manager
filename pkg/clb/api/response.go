@@ -1,4 +1,4 @@
-package cmd
+package api
 
 type Response struct {
 	Code     int    `json:"code"`

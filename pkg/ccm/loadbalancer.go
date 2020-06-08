@@ -7,7 +7,7 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/kubernetes/pkg/cloudprovider"
 
-	clb "github.com/capitalonline/cloud-controller-manager/pkg/clb/cmd"
+	clb "github.com/capitalonline/cloud-controller-manager/pkg/clb/api"
 )
 
 const (
@@ -53,7 +53,7 @@ func (cloud *Cloud) GetLoadBalancer(ctx context.Context, clusterName string, ser
 	loadBalancer, err := cloud.getLoadBalancerByName(clusterName, loadBalancerName)
 	if err != nil {
 		if err == ErrCloudLoadBalancerNotFound {
-			log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName is not exist")
+			log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer  is not exist")
 			return nil, false, nil
 		}
 		log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName is error, err is: %s", err)
@@ -74,7 +74,7 @@ func (cloud *Cloud) GetLoadBalancer(ctx context.Context, clusterName string, ser
 }
 
 func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) (*v1.LoadBalancerStatus, error) {
-	log.Infof("EnsureLoadBalancer:: clusterName is: %s, service is: %+v, nodes is:%+v", clusterName, service, nodes)
+	log.Infof("EnsureLoadBalancer:: clusterName is: %s, service is: %+v, nodes is: %+v", clusterName, service, nodes)
 	if service.Spec.SessionAffinity != v1.ServiceAffinityNone {
 		log.Errorf("EnsureLoadBalancer:: SessionAffinity is not supported currently, only support 'None' type")
 		return nil, errors.New("SessionAffinity is not supported currently, only support 'None' type")
@@ -98,8 +98,9 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 
 	// step-2. create or update loadBalancer by loadBalancerExist flag
 	if loadBalancerExist {
-		// loadBalancer is exist, then update
+		// loadBalancer is exist, then update it
 		switch 0 {
+		// only support classic yet
 		case ClbLoadBalancerKindClassic:
 			err := cloud.updateClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
 			if err != nil {
@@ -114,12 +115,14 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 	} else {
 		// loadBalancer is not exist, then create it
 		switch 0 {
+		// only support classic yet
 		case ClbLoadBalancerKindClassic:
 			err := cloud.createClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer is error, err is: %s", err)
 				return nil, err
 			}
+			log.Infof("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer succeed")
 		default:
 			log.Infof("EnsureLoadBalancer:: Unsupported loadbalancer kind, only support [classic] yet")
 			return nil, errors.New("Unsupported loadbalancer kind, only support [classic] yet")

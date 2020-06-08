@@ -37,13 +37,13 @@ func NewCloud(config io.Reader) (cloudprovider.Interface, error) {
 	}
 
 	if c.Region == "" {
-		c.Region = os.Getenv("TENCENTCLOUD_CLOUD_CONTROLLER_MANAGER_REGION")
+		c.Region = os.Getenv("CDSCLOUD_CLOUD_CONTROLLER_MANAGER_REGION")
 	}
 	if c.SecretId == "" {
-		c.SecretId = os.Getenv("TENCENTCLOUD_CLOUD_CONTROLLER_MANAGER_SECRET_ID")
+		c.SecretId = os.Getenv("CDSCLOUD_CLOUD_CONTROLLER_MANAGER_SECRET_ID")
 	}
 	if c.SecretKey == "" {
-		c.SecretKey = os.Getenv("TENCENTCLOUD_CLOUD_CONTROLLER_MANAGER_SECRET_KEY")
+		c.SecretKey = os.Getenv("CDSCLOUD_CLOUD_CONTROLLER_MANAGER_SECRET_KEY")
 	}
 
 	return &Cloud{config: c}, nil
@@ -57,12 +57,10 @@ type Cloud struct {
 
 type Config struct {
 	Region string `json:"region"`
-	VpcId  string `json:"vpc_id"`
 
 	SecretId  string `json:"secret_id"`
 	SecretKey string `json:"secret_key"`
 
-	ClusterRouteTable string `json:"cluster_route_table"`
 }
 
 // Initialize provides the cloud with a kubernetes client builder and may spawn goroutines
@@ -79,7 +77,7 @@ func (cloud *Cloud) LoadBalancer() (cloudprovider.LoadBalancer, bool) {
 
 // Instances returns an instances interface. Also returns true if the interface is supported, false otherwise.
 func (cloud *Cloud) Instances() (cloudprovider.Instances, bool) {
-	return cloud, true
+	return nil, false
 }
 
 // Zones returns a zones interface. Also returns true if the interface is supported, false otherwise.
