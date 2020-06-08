@@ -5,6 +5,6 @@ RUN cd /go/src/github.com/capitalonline/cdscloud-controller-manager && make cont
 
 FROM alpine:3.6
 RUN apk update --no-cache && apk add ca-certificates
-COPY --from=build-env /cdscloud-controller-manager /cdscloud-controller-manager
+COPY --from=build-env /cds-ccm /cds-ccm
 
-ENTRYPOINT ["/cdscloud-controller-manager"]
+ENTRYPOINT ["/cds-ccm"]

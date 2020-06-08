@@ -7,8 +7,8 @@ LDFLAGS?="-s -w"
 .PHONY: build
 build:
 	mkdir -p bin
-	CGO_ENABLED=0 go build -ldflags ${LDFLAGS} -o bin/cdscloud-controller-manager ./cmd/
+	CGO_ENABLED=0 go build -o bin/cds-ccm ./cmd/
 
 .PHONY: container-binary
 container-binary:
-	CGO_ENABLED=0 GOARCH="amd64" GOOS="linux" go build -ldflags ${LDFLAGS} -o /cdscloud-controller-manager ./cmd/
+	CGO_ENABLED=0 GOARCH="amd64" GOOS="linux" go build -o /cds-ccm ./cmd/
