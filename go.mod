@@ -3,9 +3,17 @@ module github.com/capitalonline/cloud-controller-manager
 go 1.14
 
 require (
+	github.com/dbdd4us/qcloudapi-sdk-go v0.0.0-20190530123522-c8d9381de48c
+	github.com/google/uuid v1.1.1
+	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/pflag v1.0.5
+	k8s.io/api v0.17.5
+	k8s.io/apimachinery v0.17.5
+	k8s.io/apiserver v1.17.5 // indirect
+	k8s.io/client-go v0.17.5
 	k8s.io/component-base v0.17.5
 	k8s.io/kubernetes v1.17.5
+
 )
 
 replace (
@@ -32,4 +40,3 @@ replace (
 	k8s.io/metrics => k8s.io/metrics v0.17.5
 	k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.17.5
 )
-
