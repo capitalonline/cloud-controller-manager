@@ -172,7 +172,7 @@ func (cloud *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName s
 	return cloud.deleteLoadBalancer(ctx, clusterName, service)
 }
 
-func (cloud *Cloud) getLoadBalancerByName(clusterName, loadBalancerName string) (*clb.LoadBalancer, error) {
+func (cloud *Cloud) getLoadBalancerByName(clusterName, loadBalancerName string) (*clb.DescribeLoadBalancersResponse, error) {
 	// we don't need to check loadbalancer kind here because ensureLoadBalancerInstance will ensure the kind is right
 	response, err := clb.DescribeLoadBalancers(&clb.DescribeLoadBalancersArgs{
 		ClusterName: clusterName,
@@ -183,11 +183,11 @@ func (cloud *Cloud) getLoadBalancerByName(clusterName, loadBalancerName string) 
 		return nil, err
 	}
 	// loadBalancer is not exist
-	if len(response.LoadBalancerSet) < 1 {
+	if len(response.Data.Vips) < 1 {
 		return nil, ErrCloudLoadBalancerNotFound
 	}
 
-	return &response.LoadBalancerSet[0], nil
+	return response, nil
 }
 
 func (cloud *Cloud) updateClassicLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node, loadBalancerName string) error {

@@ -19,10 +19,10 @@ type DescribeLoadBalancersArgs struct {
 type DescribeLoadBalancersResponse struct {
 	Response
 	Data struct {
-		Name 	string`json:"name"`
 		Status 	string`json:"status"`
-		Vips 	[]string`json:"ha_ip"`
-	}`json:"data"`
+		Name	string`json:"name"`
+		Vips	[]string`json:"ha_ip"`
+	} `json:"data"`
 }
 
 type CreateLoadBalancersArgs struct {
