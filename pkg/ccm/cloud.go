@@ -66,7 +66,7 @@ type Config struct {
 // Initialize provides the cloud with a kubernetes client builder and may spawn goroutines
 // to perform housekeeping activities within the cloud provider.
 func (cloud *Cloud) Initialize(clientBuilder controller.ControllerClientBuilder) {
-	cloud.kubeClient = clientBuilder.ClientOrDie("cdstcloud-cloud-provider")
+	cloud.kubeClient = clientBuilder.ClientOrDie("cdscloud-cloud-provider")
 	return
 }
 
