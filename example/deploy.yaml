@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cdscloud-cloud-controller-manager
+  namespace: kube-system
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: cdscloud-cloud-controller-manager
+    spec:
+      dnsPolicy: Default
+      tolerations:
+      - key: "node.cloudprovider.kubernetes.io/uninitialized"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "node.kubernetes.io/network-unavailable"
+        value: "true"
+        effect: "NoSchedule"
+      containers:
+      - image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:test1
+        name: cdscloud-cloud-controller-manager
+        command:
+        - /cdscloud-cloud-controller-manager
+        - --cloud-provider=cdscloud # 指定 cloud provider 为 cdscloud
+        - --allocate-node-cidrs=true # 指定 cloud provider 为 tencentcloud 为 node 分配 cidr
+        - --cluster-cidr=192.168.0.0/20 # 集群 pod 所在网络，需要提前创建
+        - --master=10.240.8.17  # master 的非 https api 地址
+        - --configure-cloud-routes=true
+        - --allow-untagged-cloud=true
+        - --node-monitor-period=60s
+        - --route-reconciliation-period=60s
