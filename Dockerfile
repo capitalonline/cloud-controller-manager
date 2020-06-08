@@ -1,7 +1,8 @@
-FROM alpine:3.6
+FROM golang:1.13.6-alpine AS build-env
+RUN apk update && apk add git make
+COPY . /go/src/github.com/capitalonline/cdscloud-controller-manager
+RUN cd /go/src/github.com/capitalonline/cdscloud-controller-manager && make container-binary
 
-RUN apk add --no-cache ca-certificates
+COPY --from=build-env /cdscloud-controller-manager /cdscloud-controller-manager
 
-ADD cloud-controller-manager /bin/
-
-CMD ["/bin/cloud-controller-manager"]
+ENTRYPOINT ["/cloud-controller-manager"]
