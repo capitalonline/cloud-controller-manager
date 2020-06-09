@@ -6,9 +6,9 @@ import (
 
 const (
 	defaultApiHost         = "http://cdsapi.capitalonline.net"
-	apiHostLiteral         = "API_HOST"
-	accessKeyIdLiteral     = "ACCESS_KEY_ID"
-	accessKeySecretLiteral = "ACCESS_KEY_SECRET"
+	apiHostLiteral         = "CDS_API_HOST"
+	accessKeyIdLiteral     = "CDS_ACCESS_KEY_ID"
+	accessKeySecretLiteral = "CDS_ACCESS_KEY_SECRET"
 	cckProductType         = "cck"
 	version                = "2019-08-08"
 	signatureVersion       = "1.0"

@@ -18,7 +18,7 @@ const (
 	// Alibaba's ccm is an example how this is done.
 	// https://github.com/kubernetes/cloud-provider-alibaba-cloud/blob/master/cmd/cloudprovider/app/ccm.go
 	cdsClusterID      string = "CDS_CLUSTER_ID"
-	cdsClusterRegion  string = "CDS_CLUSTER_REGION"
+	cdsClusterRegionID  string = "CDS_CLUSTER_REGION_ID"
 )
 
 //var (
@@ -35,14 +35,14 @@ type cloud struct {
 
 func newCloud() (cloudprovider.Interface, error) {
 	clusterID := os.Getenv(cdsClusterID)
-	region := os.Getenv(cdsClusterRegion)
+	regionID := os.Getenv(cdsClusterRegionID)
 	resources := newResources(clusterID)
 
 	var httpServer *http.Server
 	return &cloud{
-		instances:     newInstances(resources, region),
-		zones:         newZones(resources, region),
-		loadbalancers: newLoadBalancers(resources, region),
+		instances:     newInstances(resources, regionID),
+		zones:         newZones(resources, regionID),
+		loadbalancers: newLoadBalancers(resources, regionID),
 
 		httpServer: httpServer,
 	}, nil
