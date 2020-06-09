@@ -48,7 +48,7 @@ func newLoadBalancers(resources *resources, region string) cloudprovider.LoadBal
 
 func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) (status *v1.LoadBalancerStatus, exists bool, err error) {
 	log.Infof("GetLoadBalancer:: clusterName is: %s, service is: %+v", clusterName, service)
-	loadBalancerName := cloudprovider.GetLoadBalancerName(service)
+	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
 	log.Infof("GetLoadBalancer:: clusterName is: %s, loadBalancerName is: %s", clusterName, loadBalancerName)
 
 	loadBalancer, err := getLoadBalancerByName(clusterName, loadBalancerName)
@@ -158,7 +158,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 
 func (l *loadBalancers) UpdateLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) error {
 	log.Infof("UpdateLoadBalancer:: clusterName is: %s, service is: %+v, nodes is: %+v", clusterName, service, nodes)
-	loadBalancerName := cloudprovider.GetLoadBalancerName(service)
+	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
 	// only support classic yet
 	switch 0 {
 	case ClbLoadBalancerKindClassic:
