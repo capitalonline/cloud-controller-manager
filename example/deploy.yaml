@@ -120,7 +120,20 @@ spec:
         value: "true"
         effect: "NoSchedule"
       containers:
-      - image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:test1
+      - image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:test3
         name: cdscloud-cloud-controller-manager
         args:
         - --cloud-provider=cdscloud # 指定 cloud provider 为 cdscloud
+        - --allow-untagged-cloud=true
+        - --use-service-account-credentials
+        env:
+        - name: ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: cck-secrets
+              key: access_key_id
+        - name: ACCESS_KEY_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cck-secrets
+              key: access_key_secret
