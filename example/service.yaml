@@ -1,18 +1,15 @@
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
-  labels:
-    run: nginx
+  name: http-lb
   annotations:
-    service.beta.kubernetes.io/cdscloud-loadbalancer-kind: application
-    service.beta.kubernetes.io/cdscloud-loadbalancer-type: public
-  name: nginx
-  namespace: default
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
 spec:
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
-  selector:
-    run: nginx
   type: LoadBalancer
+  selector:
+    app: ccm-nginx-example
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
