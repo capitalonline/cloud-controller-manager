@@ -11,4 +11,4 @@ build:
 
 .PHONY: container-binary
 container-binary:
-	CGO_ENABLED=0 GOARCH="amd64" GOOS="linux" go build -o /cds-ccm ./cmd/
+	CGO_ENABLED=0 GOARCH="amd64" GOOS="linux" go build -mod vendor -o /cds-ccm ./cmd/
