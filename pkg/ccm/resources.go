@@ -45,7 +45,24 @@ type syncer interface {
 type tickerSyncer struct{}
 
 func (s *tickerSyncer) Sync(name string, period time.Duration, stopCh <-chan struct{}, fn func() error) {
-	return
+	ticker := time.NewTicker(period)
+	defer ticker.Stop()
+
+	// manually call to avoid initial tick delay
+	if err := fn(); err != nil {
+		klog.Errorf("%s failed: %s", name, err)
+	}
+
+	for {
+		select {
+		case <-ticker.C:
+			if err := fn(); err != nil {
+				klog.Errorf("%s failed: %s", name, err)
+			}
+		case <-stopCh:
+			return
+		}
+	}
 }
 
 
@@ -79,7 +96,6 @@ func (r *ResourcesController) Run(stopCh <-chan struct{}) {
 		klog.Info("No cluster ID configured -- skipping cluster dependent syncers.")
 		return
 	}
-	// go r.syncer.Sync("tags syncer", controllerSyncTagsPeriod, stopCh, r.syncTags)
 }
 
 
