@@ -2,12 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/capitalonline/cloud-controller-manager/pkg/ccm"
 	"os"
+
+	"k8s.io/component-base/logs"
+	_ "k8s.io/component-base/metrics/prometheus/clientgo" // load all the prometheus client-go plugins
+	_ "k8s.io/component-base/metrics/prometheus/version"  // for version metric registration
+	"k8s.io/kubernetes/cmd/cloud-controller-manager/app"
+
+	"github.com/capitalonline/cloud-controller-manager/pkg/ccm"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
-	"k8s.io/component-base/logs"
-	"k8s.io/kubernetes/cmd/cloud-controller-manager/app"
 )
 
 func main() {

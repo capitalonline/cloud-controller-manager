@@ -5,52 +5,53 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
-	"k8s.io/kubernetes/pkg/cloudprovider"
+	cloudprovider "k8s.io/cloud-provider"
 
 	clb "github.com/capitalonline/cloud-controller-manager/pkg/clb/api"
 )
 
 const (
-	// classic clb only, application clb is not support yet
-	ServiceAnnotationLoadBalancerKind = "service.beta.kubernetes.io/cdscloud-loadbalancer-kind"
-	LoadBalancerKindClassic           = "classic"
-	// LoadBalancerKindApplication    = "application"
+	// defaultActiveTimeout is the number of seconds to wait for a load balancer to
+	// reach the active state.
+	defaultActiveTimeout = 90
 
-	// public network based clb only, private network based clb is not support yet
-	ServiceAnnotationLoadBalancerType = "service.beta.kubernetes.io/cdscloud-loadbalancer-type"
-	LoadBalancerTypePublic            = "public"
-	// LoadBalancerTypePrivate           = "private"
-
-	// subnet id for private network based clb
-	// ServiceAnnotationLoadBalancerTypeInternalSubnetId = "service.beta.kubernetes.io/cdscloud-loadbalancer-type-internal-subnet-id"
-
-	// TODO enable name updating
-	// name annotation for loadbalancer
-	ServiceAnnotationLoadBalancerName        = "service.beta.kubernetes.io/cdscloud-loadbalancer-name"
-	ServiceAnnotationLoadBalancerNameDefault = "kubernetes-loadbalancer"
+	// defaultActiveCheckTick is the number of seconds between load balancer
+	// status checks when waiting for activation.
+	defaultActiveCheckTick = 5
+	
 )
 
 var (
 	ErrCloudLoadBalancerNotFound = errors.New("LoadBalancer not found")
 
-	//ClbLoadBalancerTypePublic  = 2
-	//ClbLoadBalancerTypePrivate = 3
-
 	ClbLoadBalancerKindClassic = 0
 	//ClbLoadBalancerKindApplication = 1
-
-	ClbLoadBalancerListenerProtocolHTTP  = 1
-	ClbLoadBalancerListenerProtocolHTTPS = 4
-	ClbLoadBalancerListenerProtocolTCP   = 2
-	ClbLoadBalancerListenerProtocolUDP   = 3
 )
 
-func (cloud *Cloud) GetLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) (status *v1.LoadBalancerStatus, exists bool, err error) {
+type loadBalancers struct {
+	resources         *resources
+	region            string
+	clusterID         string
+	lbActiveTimeout   int
+	lbActiveCheckTick int
+}
+
+// newLoadbalancers returns a cloudprovider.LoadBalancer whose concrete type is a *loadbalancer.
+func newLoadBalancers(resources *resources, region string) cloudprovider.LoadBalancer {
+	return &loadBalancers{
+		resources:         resources,
+		region:            region,
+		lbActiveTimeout:   defaultActiveTimeout,
+		lbActiveCheckTick: defaultActiveCheckTick,
+	}
+}
+
+func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) (status *v1.LoadBalancerStatus, exists bool, err error) {
 	log.Infof("GetLoadBalancer:: clusterName is: %s, service is: %+v", clusterName, service)
 	loadBalancerName := cloudprovider.GetLoadBalancerName(service)
 	log.Infof("GetLoadBalancer:: clusterName is: %s, loadBalancerName is: %s", clusterName, loadBalancerName)
 
-	loadBalancer, err := cloud.getLoadBalancerByName(clusterName, loadBalancerName)
+	loadBalancer, err := getLoadBalancerByName(clusterName, loadBalancerName)
 	if err != nil {
 		if err == ErrCloudLoadBalancerNotFound {
 			log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer  is not exist")
@@ -72,8 +73,15 @@ func (cloud *Cloud) GetLoadBalancer(ctx context.Context, clusterName string, ser
 		Ingress: ingresses,
 	}, true, nil
 }
-
-func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) (*v1.LoadBalancerStatus, error) {
+func (l *loadBalancers) GetLoadBalancerName (ctx context.Context, clusterName string, service *v1.Service) string {
+	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
+	res, err := getLoadBalancerByName(clusterName, loadBalancerName)
+	if err != nil {
+		return res.Data.Name
+	}
+	return err.Error()
+}
+func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) (*v1.LoadBalancerStatus, error) {
 	log.Infof("EnsureLoadBalancer:: clusterName is: %s, service is: %+v, nodes is: %+v", clusterName, service, nodes)
 	if service.Spec.SessionAffinity != v1.ServiceAffinityNone {
 		log.Errorf("EnsureLoadBalancer:: SessionAffinity is not supported currently, only support 'None' type")
@@ -82,9 +90,9 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 
 	// TODO check if kubernetes has already do validate
 	loadBalancerExist := true
-	loadBalancerName := cloudprovider.GetLoadBalancerName(service)
+	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
 	// step-1. get loadBalancer status
-	loadBalancerGet, err := cloud.getLoadBalancerByName(clusterName, loadBalancerName)
+	loadBalancerGet, err := getLoadBalancerByName(clusterName, loadBalancerName)
 	if err != nil {
 		if err == ErrCloudLoadBalancerNotFound {
 			log.Infof("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is succeed, loadBalancer is not exist")
@@ -102,7 +110,7 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 		switch 0 {
 		// only support classic yet
 		case ClbLoadBalancerKindClassic:
-			err := cloud.updateClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
+			err := updateClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.updateClassicLoadBalancer is error, err is: %s", err)
 				return nil, err
@@ -117,7 +125,7 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 		switch 0 {
 		// only support classic yet
 		case ClbLoadBalancerKindClassic:
-			err := cloud.createClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
+			err := createClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer is error, err is: %s", err)
 				return nil, err
@@ -130,7 +138,7 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 	}
 
 	// step-3. verify loadBalancer create or update successfully
-	loadBalancerVerify, err := cloud.getLoadBalancerByName(clusterName, loadBalancerName)
+	loadBalancerVerify, err := getLoadBalancerByName(clusterName, loadBalancerName)
 	if err != nil {
 		log.Errorf("EnsureLoadBalancer:: step-3 cloud.getLoadBalancerByName is error, err is: %s", err)
 		return nil, err
@@ -148,13 +156,13 @@ func (cloud *Cloud) EnsureLoadBalancer(ctx context.Context, clusterName string, 
 	}, nil
 }
 
-func (cloud *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) error {
+func (l *loadBalancers) UpdateLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) error {
 	log.Infof("UpdateLoadBalancer:: clusterName is: %s, service is: %+v, nodes is: %+v", clusterName, service, nodes)
 	loadBalancerName := cloudprovider.GetLoadBalancerName(service)
 	// only support classic yet
 	switch 0 {
 	case ClbLoadBalancerKindClassic:
-		err := cloud.updateClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
+		err := updateClassicLoadBalancer(ctx, clusterName, service, nodes, loadBalancerName)
 		if err != nil {
 			log.Errorf("UpdateLoadBalancer:: cloud.updateClassicLoadBalancer is error, err is: %s", err)
 			return err
@@ -167,12 +175,12 @@ func (cloud *Cloud) UpdateLoadBalancer(ctx context.Context, clusterName string, 
 	return nil
 }
 
-func (cloud *Cloud) EnsureLoadBalancerDeleted(ctx context.Context, clusterName string, service *v1.Service) error {
+func (l *loadBalancers) EnsureLoadBalancerDeleted(ctx context.Context, clusterName string, service *v1.Service) error {
 	log.Infof("EnsureLoadBalancerDeleted:: clusterName is: %s, service is: %+v", clusterName, service)
-	return cloud.deleteLoadBalancer(ctx, clusterName, service)
+	return deleteLoadBalancer(ctx, clusterName, service)
 }
 
-func (cloud *Cloud) getLoadBalancerByName(clusterName, loadBalancerName string) (*clb.DescribeLoadBalancersResponse, error) {
+func getLoadBalancerByName(clusterName, loadBalancerName string) (*clb.DescribeLoadBalancersResponse, error) {
 	// we don't need to check loadbalancer kind here because ensureLoadBalancerInstance will ensure the kind is right
 	response, err := clb.DescribeLoadBalancers(&clb.DescribeLoadBalancersArgs{
 		ClusterName: clusterName,
@@ -190,7 +198,7 @@ func (cloud *Cloud) getLoadBalancerByName(clusterName, loadBalancerName string) 
 	return response, nil
 }
 
-func (cloud *Cloud) updateClassicLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node, loadBalancerName string) error {
+func updateClassicLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node, loadBalancerName string) error {
 	res, err := clb.UpdateLoadBalancers(&clb.UpdateLoadBalancersArgs{
 		ClusterName:clusterName,
 		LoadBalancerName: loadBalancerName,
@@ -204,7 +212,7 @@ func (cloud *Cloud) updateClassicLoadBalancer(ctx context.Context, clusterName s
 	return nil
 }
 
-func (cloud *Cloud) createClassicLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node, loadBalancerName string) error {
+func createClassicLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node, loadBalancerName string) error {
 	res, err := clb.CreateLoadBalancers(&clb.CreateLoadBalancersArgs{
 		ClusterName:clusterName,
 		LoadBalancerName: loadBalancerName,
@@ -218,10 +226,10 @@ func (cloud *Cloud) createClassicLoadBalancer(ctx context.Context, clusterName s
 	return nil
 }
 
-func (cloud *Cloud) deleteLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) error {
+func deleteLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) error {
 	// check the loadBalancer is exist
-	loadBalancerName := cloudprovider.GetLoadBalancerName(service)
-	res, err := cloud.getLoadBalancerByName(clusterName, loadBalancerName)
+	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
+	res, err := getLoadBalancerByName(clusterName, loadBalancerName)
 	if err != nil {
 		if err == ErrCloudLoadBalancerNotFound {
 			log.Warnf("deleteLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer is not exist, so do not delete action, return nil")
@@ -242,26 +250,4 @@ func (cloud *Cloud) deleteLoadBalancer(ctx context.Context, clusterName string, 
 	}
 	log.Infof("deleteLoadBalancer:: clb.DeleteLoadBalancers delete loadBalancer succeed!")
 	return nil
-}
-
-func (cloud *Cloud) mapServicePortProtoClbProto(proto v1.Protocol) int {
-	switch proto {
-	case v1.ProtocolTCP:
-		return ClbLoadBalancerListenerProtocolTCP
-	case v1.ProtocolUDP:
-		return ClbLoadBalancerListenerProtocolUDP
-	default:
-		return ClbLoadBalancerListenerProtocolTCP
-	}
-}
-
-func (cloud *Cloud) mapClbProtoToServicePortProto(proto int) v1.Protocol {
-	switch proto {
-	case ClbLoadBalancerListenerProtocolHTTP, ClbLoadBalancerListenerProtocolTCP, ClbLoadBalancerListenerProtocolHTTPS:
-		return v1.ProtocolTCP
-	case ClbLoadBalancerListenerProtocolUDP:
-		return v1.ProtocolUDP
-	default:
-		return v1.ProtocolTCP
-	}
 }

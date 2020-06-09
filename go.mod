@@ -8,10 +8,11 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/pflag v1.0.5
 	k8s.io/api v0.17.5
-	k8s.io/apimachinery v0.17.5
-	k8s.io/apiserver v1.17.5 // indirect
-	k8s.io/client-go v0.17.5
-	k8s.io/component-base v0.17.5
+	k8s.io/apimachinery v0.18.3
+	k8s.io/apiserver v1.17.5
+	k8s.io/client-go v0.18.3
+	k8s.io/cloud-provider v0.18.3
+	k8s.io/component-base v0.18.3
 	k8s.io/kubernetes v1.17.5
 
 )
@@ -26,7 +27,8 @@ replace (
 	k8s.io/cloud-provider => k8s.io/cloud-provider v0.17.5
 	k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.17.5
 	k8s.io/code-generator => k8s.io/code-generator v0.17.6-beta.0
-	k8s.io/component-base => k8s.io/component-base v0.17.5
+	k8s.io/component-base => k8s.io/component-base v0.18.3
+	k8s.io/component-base/logs => k8s.io/component-base/logs v0.17.5
 	k8s.io/cri-api => k8s.io/cri-api v0.17.6-beta.0
 	k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.17.5
 	k8s.io/klog => k8s.io/klog v0.4.0

@@ -1,118 +1,103 @@
 package ccm
 
 import (
-	"encoding/json"
-	"errors"
-	"github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
-    clb "github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
 	"io"
-	"io/ioutil"
+	"net/http"
 	"os"
 
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/kubernetes/pkg/cloudprovider"
-	"k8s.io/kubernetes/pkg/controller"
+	log "github.com/sirupsen/logrus"
+	"k8s.io/client-go/informers"
+	cloudprovider "k8s.io/cloud-provider"
 )
 
 const (
 	ProviderName string = "cdscloud"
+	// At some point we should revisit how we start up our CCM implementation.
+	// Having to look at env vars here instead of in the cmd itself is not ideal.
+	// One option is to construct our own command that's specific to us.
+	// Alibaba's ccm is an example how this is done.
+	// https://github.com/kubernetes/cloud-provider-alibaba-cloud/blob/master/cmd/cloudprovider/app/ccm.go
+	cdsClusterID      string = "CDS_CLUSTER_ID"
+	cdsClusterRegion  string = "CDS_CLUSTER_REGION"
 )
 
-var (
-	CloudInstanceNotFound = errors.New("cdscloud instance not found")
-)
+//var (
+//	CloudInstanceNotFound = errors.New("cdscloud instance not found")
+//)
+
+type cloud struct {
+	instances     cloudprovider.Instances
+	zones         cloudprovider.Zones
+	loadbalancers cloudprovider.LoadBalancer
+
+	httpServer *http.Server
+}
+
+func newCloud() (cloudprovider.Interface, error) {
+	clusterID := os.Getenv(cdsClusterID)
+	region := os.Getenv(cdsClusterRegion)
+	resources := newResources(clusterID)
+
+	var httpServer *http.Server
+	return &cloud{
+		instances:     newInstances(resources, region),
+		zones:         newZones(resources, region),
+		loadbalancers: newLoadBalancers(resources, region),
+
+		httpServer: httpServer,
+	}, nil
+}
 
 func init() {
-	cloudprovider.RegisterCloudProvider(ProviderName, NewCloud)
-}
-
-func NewCloud(config io.Reader) (cloudprovider.Interface, error) {
-	var c Config
-	if config != nil {
-		cfg, err := ioutil.ReadAll(config)
-		if err != nil {
-			return nil, err
-		}
-		if err := json.Unmarshal(cfg, &c); err != nil {
-			return nil, err
-		}
-	}
-
-	if c.Region == "" {
-		c.Region = os.Getenv("API_HOST")
-	}
-	if c.SecretId == "" {
-		c.SecretId = os.Getenv("ACCESS_KEY_ID")
-	}
-	if c.SecretKey == "" {
-		c.SecretKey = os.Getenv("ACCESS_KEY_SECRET")
-	}
-
-	return &Cloud{config: c}, nil
-}
-
-type Cloud struct {
-	config Config
-
-	kubeClient kubernetes.Interface
-
-	clb   *clb.Client
-}
-
-type Config struct {
-	Region string `json:"region"`
-
-	SecretId  string `json:"secret_id"`
-	SecretKey string `json:"secret_key"`
-
+	log.Infof("cloud,go init()")
+	cloudprovider.RegisterCloudProvider(ProviderName, func(io.Reader) (cloudprovider.Interface, error) {
+		return newCloud()
+	})
 }
 
 // Initialize provides the cloud with a kubernetes client builder and may spawn goroutines
 // to perform housekeeping activities within the cloud provider.
-func (cloud *Cloud) Initialize(clientBuilder controller.ControllerClientBuilder) {
-	cloud.kubeClient = clientBuilder.ClientOrDie("cdscloud-cloud-provider")
-	clbClient, err := clb.NewClient(
-		common.Credential{SecretId: cloud.config.SecretId, SecretKey: cloud.config.SecretKey},
-		common.Opts{Region: cloud.config.Region},
-	)
-	if err != nil {
-		panic(err)
-	}
-	cloud.clb = clbClient
-	return
+func (c *cloud) Initialize(clientBuilder cloudprovider.ControllerClientBuilder, stop <-chan struct{}) {
+	clientset := clientBuilder.ClientOrDie("do-shared-informers")
+	sharedInformer := informers.NewSharedInformerFactory(clientset, 0)
+	clusterID := os.Getenv(cdsClusterID)
+	res := NewResourcesController(clusterID, sharedInformer.Core().V1().Services(), clientset)
+	sharedInformer.Start(nil)
+	sharedInformer.WaitForCacheSync(nil)
+	go res.Run(stop)
 }
 
 // LoadBalancer returns a balancer interface. Also returns true if the interface is supported, false otherwise.
-func (cloud *Cloud) LoadBalancer() (cloudprovider.LoadBalancer, bool) {
-	return cloud, true
+func (cloud *cloud) LoadBalancer() (cloudprovider.LoadBalancer, bool) {
+	return cloud.loadbalancers, true
 }
 
 // Instances returns an instances interface. Also returns true if the interface is supported, false otherwise.
-func (cloud *Cloud) Instances() (cloudprovider.Instances, bool) {
+func (cloud *cloud) Instances() (cloudprovider.Instances, bool) {
 	return nil, false
 }
 
 // Zones returns a zones interface. Also returns true if the interface is supported, false otherwise.
-func (cloud *Cloud) Zones() (cloudprovider.Zones, bool) {
+func (cloud *cloud) Zones() (cloudprovider.Zones, bool) {
 	return nil, false
 }
 
 // Clusters returns a clusters interface.  Also returns true if the interface is supported, false otherwise.
-func (cloud *Cloud) Clusters() (cloudprovider.Clusters, bool) {
+func (cloud *cloud) Clusters() (cloudprovider.Clusters, bool) {
 	return nil, false
 }
 
 // Routes returns a routes interface along with whether the interface is supported.
-func (cloud *Cloud) Routes() (cloudprovider.Routes, bool) {
+func (cloud *cloud) Routes() (cloudprovider.Routes, bool) {
 	return nil, false
 }
 
 // ProviderName returns the cloud provider ID.
-func (cloud *Cloud) ProviderName() string {
+func (cloud *cloud) ProviderName() string {
 	return ProviderName
 }
 
 // HasClusterID returns true if a ClusterID is required and set
-func (cloud *Cloud) HasClusterID() bool {
+func (cloud *cloud) HasClusterID() bool {
 	return false
 }
