@@ -92,23 +92,3 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 	err = json.Unmarshal(content, res)
 	return res, err
 }
-
-func DescribeInstances(args *DescribeInstancesArgs) (*DescribeInstancesResponse, error) {
-	log.Infof("api:: DescribeInstances, args is: %+v", args)
-	params := map[string]string {
-		"task_id": args.RequesetId,
-	}
-	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, params, nil)
-	response, err := common.DoRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	content, err := ioutil.ReadAll(response.Body)
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
-	}
-
-	res := &DescribeInstancesResponse{}
-	err = json.Unmarshal(content, res)
-	return res, err
-}
