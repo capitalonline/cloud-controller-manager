@@ -57,7 +57,7 @@ spec:
             configMapKeyRef:
               name: cds-properties
               key: k8s_cluster_id
-        - name: CDS_CLUSTER_REGION
+        - name: CDS_CLUSTER_REGION_ID
           valueFrom:
             configMapKeyRef:
               name: cds-properties

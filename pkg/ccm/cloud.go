@@ -60,11 +60,11 @@ func init() {
 func (c *cloud) Initialize(clientBuilder cloudprovider.ControllerClientBuilder, stop <-chan struct{}) {
 	clientset := clientBuilder.ClientOrDie("do-shared-informers")
 	sharedInformer := informers.NewSharedInformerFactory(clientset, 0)
-	clusterID := os.Getenv(cdsClusterID)
-	res := NewResourcesController(clusterID, sharedInformer.Core().V1().Services(), clientset)
+	// clusterID := os.Getenv(cdsClusterID)
+	// res := NewResourcesController(clusterID, sharedInformer.Core().V1().Services(), clientset)
 	sharedInformer.Start(nil)
 	sharedInformer.WaitForCacheSync(nil)
-	go res.Run(stop)
+	// go res.Run(stop)
 }
 
 // LoadBalancer returns a balancer interface. Also returns true if the interface is supported, false otherwise.
