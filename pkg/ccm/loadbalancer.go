@@ -48,6 +48,12 @@ func newLoadBalancers(resources *resources, region string) cloudprovider.LoadBal
 
 func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string, service *v1.Service) (status *v1.LoadBalancerStatus, exists bool, err error) {
 	log.Infof("GetLoadBalancer:: clusterName is: %s, service is: %+v", clusterName, service)
+	ingressesT := make([]v1.LoadBalancerIngress, 1)
+	log.Infof("testing, return directly")
+	return &v1.LoadBalancerStatus{
+		Ingress: ingressesT,
+	}, true, nil
+
 	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
 	log.Infof("GetLoadBalancer:: clusterName is: %s, loadBalancerName is: %s", clusterName, loadBalancerName)
 
@@ -73,6 +79,7 @@ func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string,
 		Ingress: ingresses,
 	}, true, nil
 }
+
 func (l *loadBalancers) GetLoadBalancerName (ctx context.Context, clusterName string, service *v1.Service) string {
 	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
 	res, err := getLoadBalancerByName(clusterName, loadBalancerName)
@@ -81,6 +88,7 @@ func (l *loadBalancers) GetLoadBalancerName (ctx context.Context, clusterName st
 	}
 	return err.Error()
 }
+
 func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName string, service *v1.Service, nodes []*v1.Node) (*v1.LoadBalancerStatus, error) {
 	log.Infof("EnsureLoadBalancer:: clusterName is: %s, service is: %+v, nodes is: %+v", clusterName, service, nodes)
 	if service.Spec.SessionAffinity != v1.ServiceAffinityNone {
