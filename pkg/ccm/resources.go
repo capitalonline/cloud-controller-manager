@@ -95,7 +95,7 @@ func (r *ResourcesController) Run(stopCh <-chan struct{}) {
 		klog.Info("No cluster ID configured -- skipping cluster dependent syncers.")
 		return
 	}
-	go r.syncer.Sync("tags syncer", controllerSyncTagsPeriod, stopCh, nil)
+	// go r.syncer.Sync("tags syncer", controllerSyncTagsPeriod, stopCh, nil)
 }
 
 

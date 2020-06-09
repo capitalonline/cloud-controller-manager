@@ -34,8 +34,7 @@ spec:
       containers:
       - image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:test4
         name: cds-cloud-controller-manager
-        command:
-        - "/bin/digitalocean-cloud-controller-manager"
+        args:
         - "--leader-elect=false"
         resources:
           requests:
