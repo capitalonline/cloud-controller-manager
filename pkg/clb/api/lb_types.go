@@ -14,6 +14,7 @@ type LoadBalancer struct {
 
 type DescribeLoadBalancersArgs struct {
 	ClusterName 		string`json:"cluster_name"`
+	CLusterID 	 		string`json:"cluster_id"`
 	LoadBalancerName 	string`json:"lb_name"`
 }
 type DescribeLoadBalancersResponse struct {
@@ -62,6 +63,7 @@ type UpdateLoadBalancerResponse struct {
 
 type DeleteLoadBalancersArgs struct {
 	ClusterName 		string`json:"cluster_name"`
+	CLusterID 	 		string`json:"cluster_id"`
 	LoadBalancerName 	string`json:"lb_name"`
 }
 type DeleteLoadBalancersResponse struct {
