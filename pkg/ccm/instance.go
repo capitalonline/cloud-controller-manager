@@ -27,6 +27,7 @@ func newInstances(resources *resources, region string) cloudprovider.Instances {
 // When nodeName identifies more than one droplet, only the first will be
 // considered.
 func (i *instances) NodeAddresses(ctx context.Context, nodeName types.NodeName) ([]v1.NodeAddress, error) {
+	log.Infof("NodeAddresses:: nodeName is: %s", nodeName)
 	log.Infof("not support yet")
 
 	return nil, nil
@@ -36,6 +37,7 @@ func (i *instances) NodeAddresses(ctx context.Context, nodeName types.NodeName) 
 // identified by providerID. Only the public/private IPv4 addresses will be
 // considered for now.
 func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID string) ([]v1.NodeAddress, error) {
+	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
 	log.Infof("not support yet")
 
 	return nil, nil
@@ -48,11 +50,13 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 // When nodeName identifies more than one droplet, only the first will be
 // considered.
 func (i *instances) ExternalID(ctx context.Context, nodeName types.NodeName) (string, error) {
+	log.Infof("ExternalID:: nodeName is: %s", nodeName)
 	return i.InstanceID(ctx, nodeName)
 }
 
 // InstanceID returns the cloud provider ID of the droplet identified by nodeName.
 func (i *instances) InstanceID(ctx context.Context, nodeName types.NodeName) (string, error) {
+	log.Infof("InstanceID:: nodeName is: %s", nodeName)
 	log.Infof("not support yet")
 
 	return "", nil
@@ -60,6 +64,7 @@ func (i *instances) InstanceID(ctx context.Context, nodeName types.NodeName) (st
 
 // InstanceType returns the type of the droplet identified by name.
 func (i *instances) InstanceType(ctx context.Context, name types.NodeName) (string, error) {
+	log.Infof("InstanceType:: name is: %s", name)
 	log.Infof("not support yet")
 
 	return "", nil
@@ -67,6 +72,7 @@ func (i *instances) InstanceType(ctx context.Context, name types.NodeName) (stri
 
 // InstanceTypeByProviderID returns the type of the droplet identified by providerID.
 func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID string) (string, error) {
+	log.Infof("InstanceTypeByProviderID:: providerID is: %s", providerID)
 	log.Infof("not support yet")
 
 	return "", nil
@@ -74,17 +80,20 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 
 // AddSSHKeyToAllInstances is not implemented; it always returns an error.
 func (i *instances) AddSSHKeyToAllInstances(_ context.Context, _ string, _ []byte) error {
+	log.Infof("AddSSHKeyToAllInstances:: none")
 	return errors.New("not implemented")
 }
 
 // CurrentNodeName returns hostname as a NodeName value.
 func (i *instances) CurrentNodeName(_ context.Context, hostname string) (types.NodeName, error) {
+	log.Infof("CurrentNodeName:: hostname is: %s", hostname)
 	return types.NodeName(hostname), nil
 }
 
 // InstanceExistsByProviderID returns true if the droplet identified by
 // providerID is running.
 func (i *instances) InstanceExistsByProviderID(ctx context.Context, providerID string) (bool, error) {
+	log.Infof("InstanceExistsByProviderID:: providerID is: %s", providerID)
 	log.Infof("not support yet")
 
 	return false, nil
@@ -92,6 +101,7 @@ func (i *instances) InstanceExistsByProviderID(ctx context.Context, providerID s
 
 // InstanceShutdownByProviderID returns true if the droplet is turned off
 func (i *instances) InstanceShutdownByProviderID(ctx context.Context, providerID string) (bool, error) {
+	log.Infof("InstanceShutdownByProviderID:: providerID is: %s", providerID)
 	log.Infof("not support yet")
 
 	return false, nil
