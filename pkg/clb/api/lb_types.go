@@ -28,28 +28,35 @@ type DescribeLoadBalancersResponse struct {
 type CreateLoadBalancersArgs struct {
 	ClusterName 		string`json:"cluster_name"`
 	LoadBalancerName 	string`json:"lb_name"`
-	Service 			*v1.Service`json:"service"`
-	Nodes 				[]*v1.Node`json:"nodes"`
+	CLusterID 	 		string`json:"cluster_id"`
+	NodeID 				[]string`json:"node_id"`
+	Annotations			map[string]string`json:"annotations"`
+	PortMap 			[]PortMapping`json:"port_map"`
+}
+type PortMapping struct {
+	Protocol v1.Protocol
+	Port     int32
+	Nodeport int32
 }
 type CreateLoadBalancerResponse struct {
 	Response
 	Data struct {
-		Name 	string`json:"name"`
-		Status	string`json:"status"`
+		TaskID 	string`json:"task_id"`
 	}`json:"data"`
 }
 
 type UpdateLoadBalancersArgs struct {
-	ClusterName			string`json:"cluster_name"`
+	ClusterName 		string`json:"cluster_name"`
 	LoadBalancerName 	string`json:"lb_name"`
-	Service 			*v1.Service`json:"service"`
-	Nodes 				[]*v1.Node`json:"nodes"`
+	CLusterID 	 		string`json:"cluster_id"`
+	NodeID 				[]string`json:"node_id"`
+	Annotations			map[string]string`json:"annotations"`
+	PortMap 			[]PortMapping`json:"port_map"`
 }
 type UpdateLoadBalancerResponse struct {
 	Response
 	Data struct {
-		Name 	string`json:"name"`
-		Status	string`json:"status"`
+		TaskID 	string`json:"task_id"`
 	}`json:"data"`
 }
 
@@ -59,5 +66,17 @@ type DeleteLoadBalancersArgs struct {
 }
 type DeleteLoadBalancersResponse struct {
 	Response
-	Data struct { }`json:"data"`
+	Data struct {
+		TaskID 	string`json:"task_id"`
+	}`json:"data"`
+}
+
+type DescribeLoadBalancersTaskResultArgs struct {
+	TaskID 	string`json:"task_id"`
+}
+type DescribeLoadBalancersTaskResultResponse struct {
+	Response
+	Data struct {
+		Status 	string`json:"status"`
+	}
 }
