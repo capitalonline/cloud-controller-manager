@@ -4,14 +4,6 @@ import (
 	"k8s.io/api/core/v1"
 )
 
-type LoadBalancer struct {
-	Data struct {
-		Status 	string`json:"status"`
-		Name	string`json:"name"`
-		Vips	[]string`json:"ha_ip"`
-	} `json:"data"`
-}
-
 type DescribeLoadBalancersArgs struct {
 	ClusterName 		string`json:"cluster_name"`
 	CLusterID 	 		string`json:"cluster_id"`
@@ -26,6 +18,11 @@ type DescribeLoadBalancersResponse struct {
 	} `json:"data"`
 }
 
+type PortMapping struct {
+	Protocol v1.Protocol
+	Port     int32
+	Nodeport int32
+}
 type CreateLoadBalancersArgs struct {
 	ClusterName 		string`json:"cluster_name"`
 	LoadBalancerName 	string`json:"lb_name"`
@@ -33,11 +30,6 @@ type CreateLoadBalancersArgs struct {
 	NodeID 				[]string`json:"node_id"`
 	Annotations			map[string]string`json:"annotations"`
 	PortMap 			[]PortMapping`json:"port_map"`
-}
-type PortMapping struct {
-	Protocol v1.Protocol
-	Port     int32
-	Nodeport int32
 }
 type CreateLoadBalancerResponse struct {
 	Response
