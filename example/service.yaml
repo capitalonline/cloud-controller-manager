@@ -1,15 +1,16 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: http-lb
+  name: lb-tcp
   annotations:
-    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/cds-type: "min"
+    service.beta.kubernetes.io/cds-kind: "classic"
 spec:
   type: LoadBalancer
   selector:
     app: ccm-nginx-example
   ports:
-  - name: http
+  - name: ccm-tcp
     protocol: TCP
     port: 80
     targetPort: 80
