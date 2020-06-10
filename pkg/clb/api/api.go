@@ -10,7 +10,7 @@ import (
 )
 
 func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalancersResponse, error) {
-	log.Infof("api:: DescribeLoadBalancers, args is: +v", args)
+	log.Infof("api:: DescribeLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalanc
 }
 
 func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResponse, error) {
-	log.Infof("api:: CreateLoadBalancers, args is: %+v", args)
+	log.Infof("api:: CreateLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResp
 }
 
 func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResponse, error) {
-	log.Infof("api:: UpdateLoadBalancers, args is: %+v", args)
+	log.Infof("api:: UpdateLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResp
 }
 
 func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersResponse, error) {
-	log.Infof("api:: DeleteLoadBalancers, args is: %+v", args)
+	log.Infof("api:: DeleteLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
@@ -94,6 +94,7 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 }
 
 func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
+	log.Infof("api:: DescribeLoadBalancersTaskResult")
 	params := map[string]string {
 		"task_id": args.TaskID,
 	}
