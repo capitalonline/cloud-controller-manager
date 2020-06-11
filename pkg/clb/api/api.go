@@ -93,6 +93,27 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 	return res, err
 }
 
+func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeNameArgs) (*DescribeInstancesLabelsAndNodeNameResponse, error) {
+	log.Infof("api:: DescribeInstancesLabelsAndNodeName")
+	body, err := common.MarshalJsonToIOReader(args)
+	if err != nil {
+		return nil, err
+	}
+	req, err := common.NewCCKRequest(common.ActionCreateLoadBalancers, http.MethodGet, nil, body)
+	response, err := common.DoRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	content, err := ioutil.ReadAll(response.Body)
+	if response.StatusCode >= 400 {
+		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
+	}
+
+	res := &DescribeInstancesLabelsAndNodeNameResponse{}
+	err = json.Unmarshal(content, res)
+	return res, err
+}
+
 func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
 	log.Infof("api:: DescribeLoadBalancersTaskResult")
 	params := map[string]string {

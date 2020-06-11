@@ -2,6 +2,9 @@ package ccm
 
 import (
 	"io"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"log"
 	"net/http"
 	"os"
 
@@ -33,16 +36,25 @@ type cloud struct {
 }
 
 func newCloud() (cloudprovider.Interface, error) {
+	// init k8s client
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		log.Fatalf("newCloud:: Failed to create kubernetes config: %v", err)
+	}
+	k8sClientSet, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		log.Fatalf("newCloud:: Failed to create kubernetes client: %v", err)
+	}
+
 	clusterID := os.Getenv(cdsClusterID)
 	regionID := os.Getenv(cdsClusterRegionID)
 	resources := newResources(clusterID)
 
 	var httpServer *http.Server
 	return &cloud{
-		instances:     newInstances(resources, regionID),
+		instances:     newInstances(resources, k8sClientSet, regionID),
 		zones:         newZones(resources, regionID),
 		loadbalancers: newLoadBalancers(resources, regionID),
-
 		httpServer: httpServer,
 	}, nil
 }
