@@ -47,14 +47,14 @@ func newCloud() (cloudprovider.Interface, error) {
 	}
 
 	clusterID := os.Getenv(cdsClusterID)
-	regionID := os.Getenv(cdsClusterRegionID)
+	region := os.Getenv(cdsClusterRegionID)
 	resources := newResources(clusterID)
 
 	var httpServer *http.Server
 	return &cloud{
-		instances:     newInstances(resources, k8sClientSet, regionID),
-		zones:         newZones(resources, regionID),
-		loadbalancers: newLoadBalancers(resources, regionID),
+		instances:     newInstances(resources, k8sClientSet, region),
+		zones:         newZones(resources, k8sClientSet, region),
+		loadbalancers: newLoadBalancers(resources, region),
 		httpServer: httpServer,
 	}, nil
 }
@@ -89,7 +89,7 @@ func (c *cloud) Instances() (cloudprovider.Instances, bool) {
 
 // Zones returns a zones interface. Also returns true if the interface is supported, false otherwise.
 func (c *cloud) Zones() (cloudprovider.Zones, bool) {
-	return nil, false
+	return c.zones, true
 }
 
 // Clusters returns a clusters interface.  Also returns true if the interface is supported, false otherwise.

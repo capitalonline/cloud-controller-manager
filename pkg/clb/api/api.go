@@ -93,6 +93,26 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 	return res, err
 }
 
+func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
+	log.Infof("api:: DescribeLoadBalancersTaskResult")
+	params := map[string]string {
+		"task_id": args.TaskID,
+	}
+	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, params, nil)
+	response, err := common.DoRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	content, err := ioutil.ReadAll(response.Body)
+	if response.StatusCode >= 400 {
+		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
+	}
+
+	res := &DescribeLoadBalancersTaskResultResponse{}
+	err = json.Unmarshal(content, res)
+	return res, err
+}
+
 func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeNameArgs) (*DescribeInstancesLabelsAndNodeNameResponse, error) {
 	log.Infof("api:: DescribeInstancesLabelsAndNodeName")
 	body, err := common.MarshalJsonToIOReader(args)
@@ -114,12 +134,13 @@ func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeName
 	return res, err
 }
 
-func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
-	log.Infof("api:: DescribeLoadBalancersTaskResult")
-	params := map[string]string {
-		"task_id": args.TaskID,
+func DescribeZoneByProviderID(args *DescribeZoneByProviderIDArgs) (*DescribeZoneByProviderIDResponse, error) {
+	log.Infof("api:: DescribeZoneByProviderID")
+	body, err := common.MarshalJsonToIOReader(args)
+	if err != nil {
+		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, params, nil)
+	req, err := common.NewCCKRequest(common.ActionCreateLoadBalancers, http.MethodGet, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -129,7 +150,7 @@ func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) 
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
-	res := &DescribeLoadBalancersTaskResultResponse{}
+	res := &DescribeZoneByProviderIDResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
 }
