@@ -5,7 +5,7 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
-	cloudprovider "k8s.io/cloud-provider"
+	"k8s.io/cloud-provider"
 	"time"
 
 	clb "github.com/capitalonline/cloud-controller-manager/pkg/clb/api"

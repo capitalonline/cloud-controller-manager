@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"k8s.io/client-go/informers"
-	"k8s.io/cloud-provider"
+	cloudprovider "k8s.io/cloud-provider"
 )
 
 const (
