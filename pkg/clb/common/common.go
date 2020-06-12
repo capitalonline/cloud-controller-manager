@@ -18,9 +18,11 @@ const (
 
 const (
 	// load balancer
-	ActionDescribeLoadBalancers = "DescribeLoadBalancers"
-	ActionCreateLoadBalancers = "CreateLoadBalancers"
-	ActionDeleteLoadBalancers = "DeleteLoadBalancers"
+	ActionDescribeHaproxyLoadBalancerInstance = "DescribeHaproxyLoadBalancerInstance"
+	ActionCreateHaproxyLoadBalancerInstance   = "CreateHaproxyLoadbalancerInstance"
+	ActionUpdateHaproxyLoadBalancerInstance   = "UpdateHaproxyLoadBalancerInstance"
+	ActionDeleteHaproxyLoadBalancerInstance   = "DeleteHaproxyLoadBalancerInstance"
+	ActionCheckHaproxyLoadbalancerTaskStatus  = "CheckHaproxyLoadbalancerTaskStatus"
 )
 
 var (

@@ -10,12 +10,12 @@ import (
 )
 
 func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalancersResponse, error) {
-	log.Infof("api:: DescribeLoadBalancers")
+	log.Infof("api:: DescribeHaproxyLoadBalancerInstance")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionDescribeLoadBalancers, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionDescribeHaproxyLoadBalancerInstance, http.MethodGet, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -31,12 +31,12 @@ func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalanc
 }
 
 func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResponse, error) {
-	log.Infof("api:: CreateLoadBalancers")
+	log.Infof("api:: CreateHaproxyLoadBalancerInstance")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateLoadBalancers, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -52,12 +52,12 @@ func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResp
 }
 
 func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResponse, error) {
-	log.Infof("api:: UpdateLoadBalancers")
+	log.Infof("api:: UpdateHaproxyLoadBalancerInstance")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateLoadBalancers, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionUpdateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -73,12 +73,12 @@ func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResp
 }
 
 func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersResponse, error) {
-	log.Infof("api:: DeleteLoadBalancers")
+	log.Infof("api:: DeleteHaproxyLoadBalancerInstance")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, nil, body)
+	req, err := common.NewCCKRequest(common.ActionDeleteHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -94,11 +94,11 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 }
 
 func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
-	log.Infof("api:: DescribeLoadBalancersTaskResult")
-	params := map[string]string {
+	log.Infof("api:: CheckHaproxyLoadbalancerTaskStatus")
+	params := map[string]string{
 		"task_id": args.TaskID,
 	}
-	req, err := common.NewCCKRequest(common.ActionDeleteLoadBalancers, http.MethodDelete, params, nil)
+	req, err := common.NewCCKRequest(common.ActionCheckHaproxyLoadbalancerTaskStatus, http.MethodGet, params, nil)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeName
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateLoadBalancers, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodGet, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func DescribeZoneByProviderID(args *DescribeZoneByProviderIDArgs) (*DescribeZone
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateLoadBalancers, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodGet, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
