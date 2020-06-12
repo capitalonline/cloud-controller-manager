@@ -18,11 +18,11 @@ const (
 
 const (
 	// load balancer
-	ActionDescribeHaproxyLoadBalancerInstance = "DescribeHaproxyLoadBalancerInstance"
+	ActionDescribeHaproxyLoadBalancerInstance = "DescribeHaproxyLoadbalancerInstance"
 	ActionCreateHaproxyLoadBalancerInstance   = "CreateHaproxyLoadbalancerInstance"
-	ActionUpdateHaproxyLoadBalancerInstance   = "UpdateHaproxyLoadBalancerInstance"
-	ActionDeleteHaproxyLoadBalancerInstance   = "DeleteHaproxyLoadBalancerInstance"
-	ActionCheckHaproxyLoadbalancerTaskStatus  = "CheckHaproxyLoadbalancerTaskStatus"
+	ActionUpdateHaproxyLoadBalancerInstance   = "UpdateHaproxyLoadbalancerInstance"
+	ActionDeleteHaproxyLoadBalancerInstance   = "DeleteHaproxyLoadbalancerInstance"
+	ActionCheckHaproxyLoadBalancerTaskStatus  = "CheckHaproxyLoadbalancerTaskStatus"
 )
 
 var (

@@ -2,11 +2,17 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"strings"
+)
+
+var (
+	ErrCloudLoadBalancerNotFound = errors.New("LoadBalancer not found")
 )
 
 func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalancersResponse, error) {
@@ -15,13 +21,16 @@ func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalanc
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionDescribeHaproxyLoadBalancerInstance, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionDescribeHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		if strings.Contains(string(content), "DataNotExists") {
+			return nil, ErrCloudLoadBalancerNotFound
+		}
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -98,7 +107,7 @@ func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) 
 	params := map[string]string{
 		"task_id": args.TaskID,
 	}
-	req, err := common.NewCCKRequest(common.ActionCheckHaproxyLoadbalancerTaskStatus, http.MethodGet, params, nil)
+	req, err := common.NewCCKRequest(common.ActionCheckHaproxyLoadBalancerTaskStatus, http.MethodPost, params, nil)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -119,7 +128,7 @@ func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeName
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
@@ -140,7 +149,7 @@ func DescribeZoneByProviderID(args *DescribeZoneByProviderIDArgs) (*DescribeZone
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodGet, nil, body)
+	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err

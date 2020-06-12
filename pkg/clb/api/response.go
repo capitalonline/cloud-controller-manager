@@ -1,8 +1,7 @@
 package api
 
 type Response struct {
-	Code     int    `json:"code"`
-	Message  string `json:"message"`
-	CodeDesc string `json:"codeDesc"`
+	Code     string `json:"Code"`
+	Message  string `json:"Message"`
+	CodeDesc string `json:"codeDesc,omitempty"`
 }
-

@@ -19,12 +19,9 @@ const (
 	// defaultActiveCheckTick is the number of seconds between load balancer
 	// status checks when waiting for activation.
 	defaultActiveCheckTick = 5
-	
 )
 
 var (
-	ErrCloudLoadBalancerNotFound = errors.New("LoadBalancer not found")
-
 	ClbLoadBalancerKindClassic = 0
 	//ClbLoadBalancerKindApplication = 1
 )
@@ -62,7 +59,7 @@ func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string,
 
 	loadBalancer, err := getLoadBalancerByName(clusterName, clusterID, loadBalancerName)
 	if err != nil {
-		if err == ErrCloudLoadBalancerNotFound {
+		if err == clb.ErrCloudLoadBalancerNotFound {
 			log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer  is not exist")
 			return nil, false, nil
 		}
@@ -83,7 +80,7 @@ func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string,
 	}, true, nil
 }
 
-func (l *loadBalancers) GetLoadBalancerName (ctx context.Context, clusterName string, service *v1.Service) string {
+func (l *loadBalancers) GetLoadBalancerName(ctx context.Context, clusterName string, service *v1.Service) string {
 	clusterID := l.resources.clusterID
 	log.Infof("GetLoadBalancerName:: clusterID is: %s, service.name is: %+v", clusterID, service.ObjectMeta.Name)
 	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
@@ -114,12 +111,14 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 	// step-1. get loadBalancer status
 	loadBalancerGet, err := getLoadBalancerByName(clusterName, clusterID, loadBalancerName)
 	if err != nil {
-		if err == ErrCloudLoadBalancerNotFound {
+		if err == clb.ErrCloudLoadBalancerNotFound {
 			log.Infof("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is succeed, loadBalancer is not exist, then to create it")
 			loadBalancerExist = false
+		} else {
+			log.Errorf("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is error, err is: %s", err)
+			return nil, err
 		}
-		log.Errorf("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is error, err is: %s", err)
-		return nil, err
+
 	} else {
 		log.Infof("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is succeed, loadBalancer is exist, res is: %+v", loadBalancerGet)
 	}
@@ -211,8 +210,8 @@ func (l *loadBalancers) EnsureLoadBalancerDeleted(ctx context.Context, clusterNa
 func getLoadBalancerByName(clusterName, clusterID, loadBalancerName string) (*clb.DescribeLoadBalancersResponse, error) {
 	// we don't need to check loadbalancer kind here because ensureLoadBalancerInstance will ensure the kind is right
 	response, err := clb.DescribeLoadBalancers(&clb.DescribeLoadBalancersArgs{
-		ClusterName: clusterName,
-		CLusterID: clusterID,
+		ClusterName:      clusterName,
+		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
 	})
 
@@ -223,7 +222,7 @@ func getLoadBalancerByName(clusterName, clusterID, loadBalancerName string) (*cl
 
 	// loadBalancer is not exist
 	if len(response.Data.Vips) < 1 {
-		return nil, ErrCloudLoadBalancerNotFound
+		return nil, clb.ErrCloudLoadBalancerNotFound
 	}
 
 	return response, nil
@@ -250,13 +249,13 @@ func updateClassicLoadBalancer(ctx context.Context, clusterName string, service 
 
 	// to create loadBalancer
 	res, err := clb.UpdateLoadBalancers(&clb.UpdateLoadBalancersArgs{
-		ClusterName:clusterName,
-		CLusterID: clusterID,
+		ClusterName:      clusterName,
+		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
 		// need to get from cluster
-		NodeID: make([]string, 2),
+		NodeID:      make([]string, 2),
 		Annotations: service.ObjectMeta.Annotations,
-		PortMap: portMapSlice,
+		PortMap:     portMapSlice,
 	})
 
 	if err != nil {
@@ -296,13 +295,13 @@ func createClassicLoadBalancer(ctx context.Context, clusterName string, service 
 
 	// to create loadBalancer
 	res, err := clb.CreateLoadBalancers(&clb.CreateLoadBalancersArgs{
-		ClusterName:clusterName,
-		CLusterID: clusterID,
+		ClusterName:      clusterName,
+		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
 		// need to get from cluster
-		NodeID: nodeIdSlice,
+		NodeID:      nodeIdSlice,
 		Annotations: service.ObjectMeta.Annotations,
-		PortMap: portMapSlice,
+		PortMap:     portMapSlice,
 	})
 
 	if err != nil {
@@ -325,7 +324,7 @@ func deleteLoadBalancer(ctx context.Context, clusterName, clusterID, loadBalance
 	// check the loadBalancer is exist or not
 	res, err := getLoadBalancerByName(clusterName, clusterID, loadBalancerName)
 	if err != nil {
-		if err == ErrCloudLoadBalancerNotFound {
+		if err == clb.ErrCloudLoadBalancerNotFound {
 			log.Warnf("deleteLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer is not exist, so do not delete action, return nil")
 			return nil
 		}
@@ -336,7 +335,7 @@ func deleteLoadBalancer(ctx context.Context, clusterName, clusterID, loadBalance
 
 	// loadBalancer is exist, then to delete it
 	res2, err2 := clb.DeleteLoadBalancers(&clb.DeleteLoadBalancersArgs{
-		ClusterName: clusterName,
+		ClusterName:      clusterName,
 		LoadBalancerName: loadBalancerName,
 	})
 
@@ -357,15 +356,15 @@ func deleteLoadBalancer(ctx context.Context, clusterName, clusterID, loadBalance
 	return nil
 }
 
-func describeLoadBalancersTaskResult (taskID string) error {
-	for i:= 1; i < 120; i++ {
+func describeLoadBalancersTaskResult(taskID string) error {
+	for i := 1; i < 120; i++ {
 		res, err := clb.DescribeLoadBalancersTaskResult(&clb.DescribeLoadBalancersTaskResultArgs{
 			TaskID: taskID,
 		})
 		if err != nil {
 			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is error, err is:%s", err)
 		}
-		if res.Data.Status == "running"{
+		if res.Data.Status == "running" {
 			log.Infof("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is running")
 		} else if res.Data.Status == "ok" {
 			log.Infof("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult succeed, status is: %s", res.Data.Status)
