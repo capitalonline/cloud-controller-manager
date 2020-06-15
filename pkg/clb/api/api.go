@@ -34,6 +34,7 @@ func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalanc
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &DescribeLoadBalancersResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
@@ -55,6 +56,7 @@ func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResp
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &CreateLoadBalancerResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
@@ -76,6 +78,7 @@ func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResp
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &UpdateLoadBalancerResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
@@ -97,6 +100,7 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &DeleteLoadBalancersResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
@@ -117,6 +121,7 @@ func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) 
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &DescribeLoadBalancersTaskResultResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
@@ -138,6 +143,7 @@ func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeName
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &DescribeInstancesLabelsAndNodeNameResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
@@ -159,6 +165,7 @@ func DescribeZoneByProviderID(args *DescribeZoneByProviderIDArgs) (*DescribeZone
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
+	log.Infof("api:: content is: %s", content)
 	res := &DescribeZoneByProviderIDResponse{}
 	err = json.Unmarshal(content, res)
 	return res, err
