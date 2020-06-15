@@ -238,7 +238,7 @@ func updateClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		portMapTmp.Protocol = ports.Protocol
 	}
 	portMapSlice = append(portMapSlice, portMapTmp)
-	log.Infof("updateClassicLoadBalancer:: portMapSlice is: %s", portMapSlice)
+	log.Infof("updateClassicLoadBalancer:: portMapSlice is: %+v", portMapSlice)
 
 	// get nodes providerID info
 	var nodeIdSlice []string
@@ -252,8 +252,7 @@ func updateClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		ClusterName:      clusterName,
 		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
-		// need to get from cluster
-		NodeID:      make([]string, 2),
+		NodeID: nodeIdSlice,
 		Annotations: service.ObjectMeta.Annotations,
 		PortMap:     portMapSlice,
 	})
