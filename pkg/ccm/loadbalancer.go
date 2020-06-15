@@ -283,7 +283,7 @@ func createClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		portMapTmp.Protocol = ports.Protocol
 	}
 	portMapSlice = append(portMapSlice, portMapTmp)
-	log.Infof("createClassicLoadBalancer:: portMapSlice is: %s", portMapSlice)
+	log.Infof("createClassicLoadBalancer:: portMapSlice is: %+v", portMapSlice)
 
 	// get nodes providerID info
 	var nodeIdSlice []string
@@ -335,6 +335,7 @@ func deleteLoadBalancer(ctx context.Context, clusterName, clusterID, loadBalance
 	// loadBalancer is exist, then to delete it
 	res2, err2 := clb.DeleteLoadBalancers(&clb.DeleteLoadBalancersArgs{
 		ClusterName:      clusterName,
+		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
 	})
 

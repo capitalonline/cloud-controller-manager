@@ -33,7 +33,7 @@ type CreateLoadBalancersArgs struct {
 }
 type CreateLoadBalancerResponse struct {
 	Response
-	TaskID string `json:"task_id"`
+	TaskID string `json:"TaskId"`
 }
 
 type UpdateLoadBalancersArgs struct {
@@ -56,11 +56,11 @@ type DeleteLoadBalancersArgs struct {
 }
 type DeleteLoadBalancersResponse struct {
 	Response
-	TaskID string `json:"task_id"`
+	TaskID string `json:"TaskId"`
 }
 
 type DescribeLoadBalancersTaskResultArgs struct {
-	TaskID string `json:"task_id"`
+	TaskID string `json:"TaskId"`
 }
 type DescribeLoadBalancersTaskResultResponse struct {
 	Response
