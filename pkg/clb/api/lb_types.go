@@ -72,5 +72,5 @@ type DescribeLoadBalancersTaskResultResponse struct {
 	Response
 	Data struct {
 		Status string `json:"status"`
-	}
+	}`json:"Data"`
 }
