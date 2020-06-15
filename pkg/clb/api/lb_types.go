@@ -60,7 +60,7 @@ type DeleteLoadBalancersResponse struct {
 }
 
 type DescribeLoadBalancersTaskResultArgs struct {
-	TaskID string `json:"TaskId"`
+	TaskID string `json:"task_id"`
 }
 type DescribeLoadBalancersTaskResultResponse struct {
 	Response
