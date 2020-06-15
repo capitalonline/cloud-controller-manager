@@ -5,7 +5,6 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/cloud-provider"
@@ -78,37 +77,38 @@ func (i *instances) InstanceType(ctx context.Context, name types.NodeName) (stri
 
 // InstanceTypeByProviderID returns the type of the droplet identified by providerID.
 func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID string) (string, error) {
-	clusterID := i.resources.clusterID
-	log.Infof("InstanceTypeByProviderID:: clusterID is: %s, providerID is: %s", clusterID, providerID)
-	// get node labels and nodeName
-	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
-	if err != nil {
-		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
-	}
-	log.Infof("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
+	//clusterID := i.resources.clusterID
+	//log.Infof("InstanceTypeByProviderID:: clusterID is: %s, providerID is: %s", clusterID, providerID)
+	//// get node labels and nodeName
+	//res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
+	//if err != nil {
+	//	log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
+	//}
+	//log.Infof("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
+	//
+	//if res.Data.NodeName == "" {
+	//	log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+	//	return "", errors.New("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+	//}
+	//
+	//// init cluster node labels exclude "node.kubernetes.io/instance-type"
+	//nodeName := res.Data.NodeName
+	//node, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+	//if err != nil {
+	//	log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error, err is: %s", err)
+	//	return "", errors.New("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error")
+	//}
+	//
+	//returnInstanceTypeValue := ""
+	//for _, label := range res.Data.Labels {
+	//	if label.Key == "node.kubernetes.io/instance-type" {
+	//		returnInstanceTypeValue = label.Value
+	//		continue
+	//	}
+	//	node.ObjectMeta.Labels[label.Key] = label.Value
+	//}
 
-	if res.Data.NodeName == "" {
-		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
-		return "", errors.New("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
-	}
-
-	// init cluster node labels exclude "node.kubernetes.io/instance-type"
-	nodeName := res.Data.NodeName
-	node, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
-	if err != nil {
-		log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error, err is: %s", err)
-		return "", errors.New("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error")
-	}
-
-	returnInstanceTypeValue := ""
-	for _, label := range res.Data.Labels {
-		if label.Key == "node.kubernetes.io/instance-type" {
-			returnInstanceTypeValue = label.Value
-			continue
-		}
-		node.ObjectMeta.Labels[label.Key] = label.Value
-	}
-
+	returnInstanceTypeValue := "cds.vm.8c.8g"
 	log.Infof("InstanceTypeByProviderID:: succeed, returnInstanceTypeValue is: %s", returnInstanceTypeValue)
 	// return node label which labels.key is "node.kubernetes.io/instance-type"
 	return returnInstanceTypeValue, nil
