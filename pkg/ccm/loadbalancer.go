@@ -364,14 +364,11 @@ func describeLoadBalancersTaskResult(taskID string) error {
 		if err != nil {
 			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is error, err is:%s", err)
 		}
-		if res.Data.Status == "running" {
-			log.Infof("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is running")
-		} else if res.Data.Status == "ok" {
+		if res.Data.Status == "doing" {
+			log.Infof("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is doing")
+		} else if res.Data.Status == "finish" {
 			log.Infof("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult succeed, status is: %s", res.Data.Status)
 			return nil
-		} else if res.Data.Status == "failed" {
-			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult failed, status is: %s", res.Data.Status)
-			return errors.New("clb.DescribeLoadBalancersTaskResult failed")
 		} else if res.Data.Status == "error" {
 			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult error, status is: %s", res.Data.Status)
 			return errors.New("clb.DescribeLoadBalancersTaskResult error")
