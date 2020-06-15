@@ -48,11 +48,11 @@ func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string,
 	clusterID := l.resources.clusterID
 	log.Infof("GetLoadBalancer:: clusterID is: %s, service.name is: %s", clusterID, service.ObjectMeta.Name)
 	// testing code
-	ingressesT := make([]v1.LoadBalancerIngress, 1)
-	log.Infof("testing, return directly")
-	return &v1.LoadBalancerStatus{
-		Ingress: ingressesT,
-	}, true, nil
+	//ingressesT := make([]v1.LoadBalancerIngress, 1)
+	//log.Infof("testing, return directly")
+	//return &v1.LoadBalancerStatus{
+	//	Ingress: ingressesT,
+	//}, true, nil
 	// business code
 	loadBalancerName := cloudprovider.DefaultLoadBalancerName(service)
 	log.Infof("GetLoadBalancer:: clusterName is: %s, loadBalancerName is: %s", clusterName, loadBalancerName)
