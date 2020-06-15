@@ -262,7 +262,7 @@ func updateClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		return err
 	}
 
-	taskID := res.Data.TaskID
+	taskID := res.TaskID
 	log.Infof("updateClassicLoadBalancer: create task succeed, TaskID is: %+v", taskID)
 
 	// to check loadBalancer update task result
@@ -308,7 +308,7 @@ func createClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		return err
 	}
 
-	taskID := res.Data.TaskID
+	taskID := res.TaskID
 	log.Infof("createClassicLoadBalancer: create task succeed, TaskID is: %+v", taskID)
 
 	// to check loadBalancer create task result
@@ -343,7 +343,7 @@ func deleteLoadBalancer(ctx context.Context, clusterName, clusterID, loadBalance
 		return err2
 	}
 
-	taskID := res2.Data.TaskID
+	taskID := res2.TaskID
 	log.Infof("deleteLoadBalancer:: clb.DeleteLoadBalancers delete task_id is: %s", taskID)
 
 	// to check loadBalancer delete task result
