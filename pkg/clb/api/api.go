@@ -108,10 +108,11 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 
 func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
 	log.Infof("api:: DescribeLoadBalancersTaskResult")
-	params := map[string]string{
-		"task_id": args.TaskID,
+	body, err := common.MarshalJsonToIOReader(args)
+	if err != nil {
+		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCheckHaproxyLoadBalancerTaskStatus, http.MethodPost, params, nil)
+	req, err := common.NewCCKRequest(common.ActionCheckHaproxyLoadBalancerTaskStatus, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
