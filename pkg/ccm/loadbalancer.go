@@ -236,8 +236,9 @@ func updateClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		portMapTmp.Port = ports.Port
 		portMapTmp.Nodeport = ports.NodePort
 		portMapTmp.Protocol = ports.Protocol
+		// add to slice
+		portMapSlice = append(portMapSlice, portMapTmp)
 	}
-	portMapSlice = append(portMapSlice, portMapTmp)
 	log.Infof("updateClassicLoadBalancer:: portMapSlice is: %+v", portMapSlice)
 
 	// get nodes providerID info
@@ -281,9 +282,10 @@ func createClassicLoadBalancer(ctx context.Context, clusterName string, service 
 		portMapTmp.Port = ports.Port
 		portMapTmp.Nodeport = ports.NodePort
 		portMapTmp.Protocol = ports.Protocol
+		// append to slice
+		portMapSlice = append(portMapSlice, portMapTmp)
 	}
-	portMapSlice = append(portMapSlice, portMapTmp)
-	log.Infof("createClassicLoadBalancer:: portMapSlice is: %+v", portMapSlice)
+	log.Infof("createClassicLoadBalancer:: portMapSlice is: %s", portMapSlice)
 
 	// get nodes providerID info
 	var nodeIdSlice []string
