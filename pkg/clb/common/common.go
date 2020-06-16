@@ -23,6 +23,9 @@ const (
 	ActionUpdateHaproxyLoadBalancerInstance   = "UpdateHaproxyLoadbalancerInstance"
 	ActionDeleteHaproxyLoadBalancerInstance   = "DeleteHaproxyLoadbalancerInstance"
 	ActionCheckHaproxyLoadBalancerTaskStatus  = "CheckHaproxyLoadbalancerTaskStatus"
+
+	// instance
+	ActionDescribeInstancesLabelsAndNodeName = "DescribeInstancesLabelsAndNodeName"
 )
 
 var (

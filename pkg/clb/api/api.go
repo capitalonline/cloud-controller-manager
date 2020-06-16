@@ -134,7 +134,7 @@ func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeName
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
+	req, err := common.NewCCKRequest(common.ActionDescribeInstancesLabelsAndNodeName, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err
