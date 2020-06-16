@@ -5,6 +5,7 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/cloud-provider"
@@ -77,40 +78,65 @@ func (i *instances) InstanceType(ctx context.Context, name types.NodeName) (stri
 
 // InstanceTypeByProviderID returns the type of the droplet identified by providerID.
 func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID string) (string, error) {
-	//clusterID := i.resources.clusterID
-	//log.Infof("InstanceTypeByProviderID:: clusterID is: %s, providerID is: %s", clusterID, providerID)
-	//// get node labels and nodeName
-	//res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
-	//if err != nil {
-	//	log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
-	//}
-	//log.Infof("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
-	//
-	//if res.Data.NodeName == "" {
-	//	log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
-	//	return "", errors.New("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
-	//}
-	//
-	//// init cluster node labels exclude "node.kubernetes.io/instance-type"
-	//nodeName := res.Data.NodeName
-	//node, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
-	//if err != nil {
-	//	log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error, err is: %s", err)
-	//	return "", errors.New("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error")
-	//}
-	//
-	//returnInstanceTypeValue := ""
-	//for _, label := range res.Data.Labels {
-	//	if label.Key == "node.kubernetes.io/instance-type" {
-	//		returnInstanceTypeValue = label.Value
-	//		continue
-	//	}
-	//	node.ObjectMeta.Labels[label.Key] = label.Value
-	//}
+	clusterID := i.resources.clusterID
+	log.Infof("InstanceTypeByProviderID:: clusterID is: %s, providerID is: %s", clusterID, providerID)
+	// get node labels and nodeName
+	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
+	if err != nil {
+		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
+	}
+	log.Infof("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
 
-	returnInstanceTypeValue := "cds.vm.8c.8g"
+	if res.Data.NodeName == "" {
+		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+		return "", errors.New("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+	}
+
+	// init cluster node labels exclude "node.kubernetes.io/instance-type"
+	nodeName := res.Data.NodeName
+	node, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+	if err != nil {
+		log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error, err is: %s", err)
+		return "", errors.New("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error")
+	}
+
+	// set labels
+	returnInstanceTypeValue := ""
+	if len(res.Data.Labels) != 0 {
+		for _, label := range res.Data.Labels {
+			for key, value := range label {
+				if key == "node.kubernetes.io/instance-type" {
+					returnInstanceTypeValue = value
+					continue
+				}
+				node.ObjectMeta.Labels[key] = value
+				log.Infof("InstanceTypeByProviderID:: set node.ObjectMeta.Labels is: %s", label)
+			}
+		}
+	}
+
+	// set taints
+	var taintStructTmp v1.Taint
+	// var taintTmpSlice []v1.Taint
+	taintSliceTmp := node.Spec.Taints
+	if len(res.Data.Taints) != 0 {
+		for _, taint := range res.Data.Taints {
+			for key, value := range taint {
+				taintStructTmp.Key = key
+				// taintTmp.Value = value
+				// taintTmp.Effect = "NoSchedule"
+				taintStructTmp.Effect = v1.TaintEffect(value)
+			}
+			taintSliceTmp = append(taintSliceTmp, taintStructTmp)
+		}
+		// not set taints yet to do testing firstly
+		// node.Spec.Taints = taintSliceTmp
+		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %s", taintSliceTmp)
+	}
+
+	// returnInstanceTypeValue := "cds.vm.8c.8g"
 	log.Infof("InstanceTypeByProviderID:: succeed, returnInstanceTypeValue is: %s", returnInstanceTypeValue)
-	// return node label which labels.key is "node.kubernetes.io/instance-type"
+	// return node label which label.key is "node.kubernetes.io/instance-type"
 	return returnInstanceTypeValue, nil
 }
 

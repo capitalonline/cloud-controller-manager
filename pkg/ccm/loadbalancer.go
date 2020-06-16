@@ -377,8 +377,8 @@ func describeLoadBalancersTaskResult(taskID string) error {
 			return errors.New("clb.DescribeLoadBalancersTaskResult time out, running more than 20 minutes")
 		}
 
-		time.Sleep(time.Second * 10)
 		log.Infof("DescribeLoadBalancersTaskResult:: time.sleep 30s")
+		time.Sleep(time.Second * 10)
 	}
 	return nil
 }

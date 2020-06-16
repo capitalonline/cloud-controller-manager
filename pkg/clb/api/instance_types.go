@@ -8,11 +8,8 @@ type DescribeInstancesLabelsAndNodeNameArgs struct {
 type DescribeInstancesLabelsAndNodeNameResponse struct {
 	Response
 	Data struct {
-		Labels  	[]LabelMapping`json:"labels"`
+		Labels  	[]map[string]string`json:"labels"`
 		NodeName 	string`json:"node_name"`
-	}`json:"data"`
-}
-type LabelMapping struct {
-	Key 	string`json:"key"`
-	Value 	string`json:"value"`
+		Taints 		[]map[string]string`json:"taints"`
+	}`json:"Data"`
 }
