@@ -1,9 +1,5 @@
 package api
 
-import (
-	"k8s.io/api/core/v1"
-)
-
 type DescribeLoadBalancersArgs struct {
 	ClusterName      string `json:"cluster_name"`
 	CLusterID        string `json:"cluster_id"`
@@ -19,9 +15,9 @@ type DescribeLoadBalancersResponse struct {
 }
 
 type PortMapping struct {
-	Protocol v1.Protocol `json:"protocol"`
+	// Protocol v1.Protocol `json:"protocol"`
 	Port     int32       `json:"port"`
-	Nodeport int32       `json:"node_port"`
+	NodePort int32       `json:"node_port"`
 }
 type CreateLoadBalancersArgs struct {
 	ClusterName      string            `json:"cluster_name"`
