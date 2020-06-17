@@ -156,7 +156,7 @@ func DescribeInstanceExistsByProviderID(args *DescribeInstanceExistsByProviderID
 	if err != nil {
 		return nil, err
 	}
-	req, err := common.NewCCKRequest(common.ActionDescribeInstanceExistsByProviderID, http.MethodPost, nil, body)
+	req, err := common.NewCCKRequest(common.ActionDescribeNodeInstanceStatus, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
 	if err != nil {
 		return nil, err

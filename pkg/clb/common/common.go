@@ -26,7 +26,7 @@ const (
 
 	// instance
 	ActionDescribeInstancesLabelsAndNodeName = "DescribeInstancesLabelsAndNodeName"
-	ActionDescribeInstanceExistsByProviderID = "DescribeInstanceExistsByProviderID"
+	ActionDescribeNodeInstanceStatus = "DescribeNodeInstanceStatus"
 )
 
 var (
