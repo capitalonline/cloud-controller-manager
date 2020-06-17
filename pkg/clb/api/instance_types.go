@@ -13,3 +13,15 @@ type DescribeInstancesLabelsAndNodeNameResponse struct {
 		Taints 		[]map[string]string`json:"taints"`
 	}`json:"Data"`
 }
+
+
+type DescribeInstanceExistsByProviderIDArgs struct {
+	ProviderID string`json:"provider_id"`
+}
+
+type DescribeInstanceExistsByProviderIDResponse struct {
+	Response
+	Data struct {
+		Status string`json:"status"`
+	}`json:"Data"`
+}

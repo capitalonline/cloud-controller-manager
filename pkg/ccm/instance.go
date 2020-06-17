@@ -129,8 +129,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 			}
 			taintSliceTmp = append(taintSliceTmp, taintStructTmp)
 		}
-		// not set taints yet to do testing firstly
-		// node.Spec.Taints = taintSliceTmp
+		node.Spec.Taints = taintSliceTmp
 		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %s", taintSliceTmp)
 	}
 
@@ -152,13 +151,22 @@ func (i *instances) CurrentNodeName(_ context.Context, hostname string) (types.N
 	return types.NodeName(hostname), nil
 }
 
-// InstanceExistsByProviderID returns true if the droplet identified by
+// InstanceExistsByProviderID returns true if the instance identified by
 // providerID is running.
 func (i *instances) InstanceExistsByProviderID(ctx context.Context, providerID string) (bool, error) {
 	log.Infof("InstanceExistsByProviderID:: providerID is: %s", providerID)
-	log.Infof("not support yet")
+	ok, err := describeInstanceExistsByProviderID(providerID)
 
-	return false, nil
+	if !ok {
+		if err != nil {
+			log.Errorf("InstanceExistsByProviderID:: instance with unknown error")
+			return false, err
+		}
+		log.Errorf("InstanceExistsByProviderID:: instance is not exist")
+		return false, nil
+	}
+	log.Infof("InstanceExistsByProviderID:: instance is exist")
+	return true, nil
 }
 
 // InstanceShutdownByProviderID returns true if the droplet is turned off
@@ -181,4 +189,23 @@ func getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID string)(*c
 	}
 
 	return response, nil
+}
+
+func describeInstanceExistsByProviderID(providerID string) (bool, error) {
+	response, err := clb.DescribeInstanceExistsByProviderID(&clb.DescribeInstanceExistsByProviderIDArgs{
+		ProviderID: providerID,
+	})
+
+	// api with error
+	if err != nil {
+		return false, err
+	}
+
+	if response.Data.Status == "true" {
+		return true, nil
+	} else if response.Data.Status == "false" {
+		return  false, nil
+	} else {
+		return false, errors.New("unknown error")
+	}
 }
