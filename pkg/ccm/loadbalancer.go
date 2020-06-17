@@ -242,13 +242,21 @@ func updateClassicLoadBalancer(ctx context.Context, clusterName string, service 
 	}
 	log.Infof("updateClassicLoadBalancer:: nodeIdSlice is: %s", nodeIdSlice)
 
+	// get service annotations
+	var annotationsSliceTmp []string
+	for key, value := range service.ObjectMeta.Annotations {
+		stringTmp := key + ":" + value
+		annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
+	}
+	log.Infof("updateClassicLoadBalancer:: annotationsSliceTmp is: %s", annotationsSliceTmp)
+
 	// to create loadBalancer
 	res, err := clb.UpdateLoadBalancers(&clb.UpdateLoadBalancersArgs{
 		ClusterName:      clusterName,
 		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
 		NodeID: nodeIdSlice,
-		Annotations: service.ObjectMeta.Annotations,
+		Annotations: annotationsSliceTmp,
 		PortMap:     portMapSlice,
 	})
 
@@ -288,13 +296,21 @@ func createClassicLoadBalancer(ctx context.Context, clusterName string, service 
 	}
 	log.Infof("createClassicLoadBalancer:: nodeIdSlice is: %s", nodeIdSlice)
 
+	// get service annotations
+	var annotationsSliceTmp []string
+	for key, value := range service.ObjectMeta.Annotations {
+		stringTmp := key + ":" + value
+		annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
+	}
+	log.Infof("createClassicLoadBalancer:: annotationsSliceTmp is: %s", annotationsSliceTmp)
+
 	// to create loadBalancer
 	res, err := clb.CreateLoadBalancers(&clb.CreateLoadBalancersArgs{
 		ClusterName:      clusterName,
 		CLusterID:        clusterID,
 		LoadBalancerName: loadBalancerName,
 		NodeID:      nodeIdSlice,
-		Annotations: service.ObjectMeta.Annotations,
+		Annotations: annotationsSliceTmp,
 		PortMap:     portMapSlice,
 	})
 
