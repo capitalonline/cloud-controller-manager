@@ -139,7 +139,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 		switch 0 {
 		// only support classic yet
 		case ClbLoadBalancerKindClassic:
-			err := updateClassicLoadBalancer(ctx, service, nodes, clusterID)
+			err := updateClassicLoadBalancer(ctx, service, nodes, clusterID, loadBalancerName)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.updateClassicLoadBalancer is error, err is: %s", err)
 				return nil, err
@@ -154,7 +154,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 		switch 0 {
 		// only support classic yet
 		case ClbLoadBalancerKindClassic:
-			err := createClassicLoadBalancer(ctx, service, nodes, clusterID)
+			err := createClassicLoadBalancer(ctx, service, nodes, clusterID, loadBalancerName)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer is error, err is: %s", err)
 				return nil, err
@@ -196,7 +196,7 @@ func (l *loadBalancers) UpdateLoadBalancer(ctx context.Context, clusterName stri
 	switch 0 {
 	// only support classic yet
 	case ClbLoadBalancerKindClassic:
-		err := updateClassicLoadBalancer(ctx, service, nodes, clusterID)
+		err := updateClassicLoadBalancer(ctx, service, nodes, clusterID, loadBalancerName)
 		if err != nil {
 			log.Errorf("UpdateLoadBalancer:: cloud.updateClassicLoadBalancer is error, err is: %s", err)
 			return err
@@ -245,7 +245,7 @@ func getLoadBalancerByName(clusterID, serviceName, serviceNameSpace, serviceUid,
 	return response, nil
 }
 
-func updateClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes []*v1.Node, clusterID string) error {
+func updateClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes []*v1.Node, clusterID, loadBalancerName string) error {
 	// loadBalacer params
 	serviceName := service.ObjectMeta.Name
 	serviceNameSpace := service.ObjectMeta.Namespace
@@ -287,6 +287,7 @@ func updateClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes [
 		ServiceName: serviceName,
 		ServiceNameSpace: serviceNameSpace,
 		ServiceUid: serviceUid,
+		LoadBalancerName: loadBalancerName,
 	})
 
 	if err != nil {
@@ -305,7 +306,7 @@ func updateClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes [
 	return nil
 }
 
-func createClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes []*v1.Node, clusterID string) error {
+func createClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes []*v1.Node, clusterID, loadBalancerName string) error {
 	// loadBalacer params
 	serviceName := service.ObjectMeta.Name
 	serviceNameSpace := service.ObjectMeta.Namespace
@@ -347,6 +348,7 @@ func createClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes [
 		ServiceName: serviceName,
 		ServiceNameSpace: serviceNameSpace,
 		ServiceUid: serviceUid,
+		LoadBalancerName: loadBalancerName,
 	})
 
 	if err != nil {
