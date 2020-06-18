@@ -1,31 +1,35 @@
 package api
 
 type DescribeLoadBalancersArgs struct {
-	ClusterName      string `json:"cluster_name"`
-	CLusterID        string `json:"cluster_id"`
+	ClusterID        string `json:"cluster_id"`
+	ServiceName 	 string `json:"service_name"`
+	ServiceNameSpace string `json:"service_name_space"`
+	ServiceUid       string `json:"service_uid"`
 	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type DescribeLoadBalancersResponse struct {
 	Response
 	Data struct {
-		Status string   `json:"status"`
-		Name   string   `json:"name"`
+		Status string `json:"status"`
+		Name   string `json:"name"`
 		Vips   []string `json:"vips"`
 	} `json:"Data"`
 }
 
 type PortMapping struct {
 	// Protocol v1.Protocol `json:"protocol"`
-	Port     int32       `json:"port"`
-	NodePort int32       `json:"node_port"`
+	Port     int32 `json:"port"`
+	NodePort int32 `json:"node_port"`
 }
 type CreateLoadBalancersArgs struct {
-	ClusterName      string            `json:"cluster_name"`
-	LoadBalancerName string            `json:"loadbalancer_name"`
-	CLusterID        string            `json:"cluster_id"`
-	NodeID           []string          `json:"node_id"`
-	Annotations      []string			`json:"annotations"`
-	PortMap          []PortMapping     `json:"port_map"`
+	ClusterID        string `json:"cluster_id"`
+	NodeID           []string `json:"node_id"`
+	Annotations      []string `json:"annotations"`
+	PortMap          []PortMapping `json:"port_map"`
+	ServiceName 	 string `json:"service_name"`
+	ServiceNameSpace string `json:"service_name_space"`
+	ServiceUid       string `json:"service_uid"`
+	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type CreateLoadBalancerResponse struct {
 	Response
@@ -33,12 +37,14 @@ type CreateLoadBalancerResponse struct {
 }
 
 type UpdateLoadBalancersArgs struct {
-	ClusterName      string`json:"cluster_name"`
-	LoadBalancerName string`json:"loadbalancer_name"`
-	CLusterID        string`json:"cluster_id"`
-	NodeID           []string`json:"node_id"`
-	Annotations      []string`json:"annotations"`
-	PortMap          []PortMapping`json:"port_map"`
+	ClusterID        string `json:"cluster_id"`
+	NodeID           []string `json:"node_id"`
+	Annotations      []string `json:"annotations"`
+	PortMap          []PortMapping `json:"port_map"`
+	ServiceName 	 string `json:"service_name"`
+	ServiceNameSpace string `json:"service_name_space"`
+	ServiceUid       string `json:"service_uid"`
+	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type UpdateLoadBalancerResponse struct {
 	Response
@@ -46,8 +52,10 @@ type UpdateLoadBalancerResponse struct {
 }
 
 type DeleteLoadBalancersArgs struct {
-	ClusterName      string `json:"cluster_name"`
-	CLusterID        string `json:"cluster_id"`
+	ClusterID        string `json:"cluster_id"`
+	ServiceName 	 string `json:"service_name"`
+	ServiceNameSpace string `json:"service_name_space"`
+	ServiceUid       string `json:"service_uid"`
 	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type DeleteLoadBalancersResponse struct {
@@ -56,7 +64,7 @@ type DeleteLoadBalancersResponse struct {
 }
 
 type DescribeLoadBalancersTaskResultArgs struct {
-	TaskID string`json:"task_id"`
+	TaskID string `json:"task_id"`
 }
 type DescribeLoadBalancersTaskResultResponse struct {
 	Response
