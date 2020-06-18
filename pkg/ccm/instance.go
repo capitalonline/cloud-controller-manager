@@ -123,8 +123,6 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		for _, taint := range res.Data.Taints {
 			for key, value := range taint {
 				taintStructTmp.Key = key
-				taintStructTmp.Value = value
-				// taintTmp.Effect = "NoSchedule"
 				taintStructTmp.Effect = v1.TaintEffect(value)
 			}
 			taintSliceTmp = append(taintSliceTmp, taintStructTmp)
