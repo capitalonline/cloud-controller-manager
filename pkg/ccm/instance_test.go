@@ -37,3 +37,21 @@ func Test_getNodeInstanceTypeAndNodeNameByProviderID (t *testing.T) {
 	}
 
 }
+
+func Test_describeInstanceExistsByProviderID (t *testing.T) {
+	// params
+	fakeProviderID := ""
+
+	// func
+	actualStatus, err := describeInstanceExistsByProviderID(fakeProviderID)
+
+	// verify
+	if actualStatus != true {
+		t.Errorf("unexpected status got: %v want: true", actualStatus)
+	}
+
+	// err
+	if err != nil {
+		t.Errorf("unexpected err, expected nil. got: %v", err)
+	}
+}
