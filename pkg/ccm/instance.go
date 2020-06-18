@@ -130,6 +130,12 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 			taintSliceTmp = append(taintSliceTmp, taintStructTmp)
 		}
 		node.Spec.Taints = taintSliceTmp
+
+		// update nodes
+		_, err = i.k8sClient.CoreV1().Nodes().Update(node)
+		if err != nil {
+			log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+		}
 		log.Infof("InstanceTypeByProviderID:: taintSliceTmp is: %+v", taintSliceTmp)
 		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %+v", node.Spec.Taints)
 	}
