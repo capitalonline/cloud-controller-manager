@@ -6,6 +6,7 @@ CCM_KUSTOMIZATION_RELEASE_PATH=${CCM_DEPLOY_PATH}/overlays/release
 CCM_KUSTOMIZATION_RELEASE_FILE=${CCM_KUSTOMIZATION_RELEASE_PATH}/kustomization.yaml
 CCM_KUSTOMIZATION_TEST_PATH=${CCM_DEPLOY_PATH}/overlays/test
 CCM_KUSTOMIZATION_TEST_FILE=${CCM_KUSTOMIZATION_RELEASE_PATH}/kustomization.yaml
+CCM_CLOUD_CONTROLLER_MANAGER=${CCM_DEPLOY_PATH}/base/cloud-controller-manager.yaml
 .EXPORT_ALL_VARIABLES:
 
 .PHONY: build
@@ -21,7 +22,7 @@ container-binary:
 image-release:
 	docker build -t $(IMAGE):$(VERSION) .
 
-.PHONY: image-build
+.PHONY: image
 image:
 	docker build -t $(IMAGE):latest .
 
