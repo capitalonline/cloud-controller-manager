@@ -123,14 +123,15 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		for _, taint := range res.Data.Taints {
 			for key, value := range taint {
 				taintStructTmp.Key = key
-				// taintTmp.Value = value
+				taintStructTmp.Value = value
 				// taintTmp.Effect = "NoSchedule"
 				taintStructTmp.Effect = v1.TaintEffect(value)
 			}
 			taintSliceTmp = append(taintSliceTmp, taintStructTmp)
 		}
 		node.Spec.Taints = taintSliceTmp
-		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %s", taintSliceTmp)
+		log.Infof("InstanceTypeByProviderID:: taintSliceTmp is: %+v", taintSliceTmp)
+		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %+v", node.Spec.Taints)
 	}
 
 	// returnInstanceTypeValue := "cds.vm.8c.8g"

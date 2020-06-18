@@ -33,12 +33,12 @@ type CreateLoadBalancerResponse struct {
 }
 
 type UpdateLoadBalancersArgs struct {
-	ClusterName      string            `json:"cluster_name"`
-	LoadBalancerName string            `json:"loadbalancer_name"`
-	CLusterID        string            `json:"cluster_id"`
-	NodeID           []string          `json:"node_id"`
-	Annotations      []string `json:"annotations"`
-	PortMap          []PortMapping     `json:"port_map"`
+	ClusterName      string`json:"cluster_name"`
+	LoadBalancerName string`json:"loadbalancer_name"`
+	CLusterID        string`json:"cluster_id"`
+	NodeID           []string`json:"node_id"`
+	Annotations      []string`json:"annotations"`
+	PortMap          []PortMapping`json:"port_map"`
 }
 type UpdateLoadBalancerResponse struct {
 	Response
