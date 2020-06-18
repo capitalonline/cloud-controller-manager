@@ -5,7 +5,6 @@ type DescribeLoadBalancersArgs struct {
 	ServiceName 	 string `json:"service_name"`
 	ServiceNameSpace string `json:"service_name_space"`
 	ServiceUid       string `json:"service_uid"`
-	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type DescribeLoadBalancersResponse struct {
 	Response
@@ -29,7 +28,6 @@ type CreateLoadBalancersArgs struct {
 	ServiceName 	 string `json:"service_name"`
 	ServiceNameSpace string `json:"service_name_space"`
 	ServiceUid       string `json:"service_uid"`
-	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type CreateLoadBalancerResponse struct {
 	Response
@@ -44,7 +42,6 @@ type UpdateLoadBalancersArgs struct {
 	ServiceName 	 string `json:"service_name"`
 	ServiceNameSpace string `json:"service_name_space"`
 	ServiceUid       string `json:"service_uid"`
-	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type UpdateLoadBalancerResponse struct {
 	Response
@@ -56,7 +53,6 @@ type DeleteLoadBalancersArgs struct {
 	ServiceName 	 string `json:"service_name"`
 	ServiceNameSpace string `json:"service_name_space"`
 	ServiceUid       string `json:"service_uid"`
-	LoadBalancerName string `json:"loadbalancer_name"`
 }
 type DeleteLoadBalancersResponse struct {
 	Response
