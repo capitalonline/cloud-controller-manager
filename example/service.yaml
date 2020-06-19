@@ -2,12 +2,11 @@ kind: Service
 apiVersion: v1
 metadata:
   name: lb-tcp
+  namespace: default
   annotations:
-    service.beta.kubernetes.io/cds-load-balancer-protocol: http | tcp
-    service.beta.kubernetes.io/cds-load-balancer-size:  large | normal | medium | small
-    service.beta.kubernetes.io/cds-load-balancer-max-connection: max | medium | min
-#    service.beta.kubernetes.io/healthy-check: true | false
-#    service.beta.kubernetes.io/timeout: 10s | 20s | 30s
+    service.beta.kubernetes.io/cds-load-balancer-protocol: http
+    service.beta.kubernetes.io/cds-load-balancer-size:  large
+    service.beta.kubernetes.io/cds-load-balancer-max-connection: 20000
 spec:
   type: LoadBalancer
   selector:

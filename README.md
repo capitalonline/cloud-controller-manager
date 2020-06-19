@@ -5,12 +5,12 @@
 
 ## 参数说明
 
-| 字段                                                         | 可选值                                       | 描述                                                         |
-| ------------------------------------------------------------ | -------------------------------------------- | ------------------------------------------------------------ |
-| metadata.annotations:<br />service.beta.kubernetes.io/cds-load-balancer-protocol | http \| tcp                                  | 创建的 LoadBalancer 网络协议，仅支持 http 和 tcp             |
-| metadata.annotations:<br />service.beta.kubernetes.io/cds-load-balancer-size | exlarge \| large \| normal \|medium \| small | LoadBalancer 规格说明如下<br />exlarge - <br />large - <br />normal - <br />medium - <br />small - |
-| metadata.annotations:<br />service.beta.kubernetes.io/cds-load-balancer-max-connection | 20000                                        | LoadBalancer 连接数设定<br />< 20000 的任何整数              |
-| spec.ports.protocol                                          | TCP                                          | 目前仅支持 TCP                                               |
+| 字段                                                         | 可选值                             | 描述                                                         |
+| ------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------------------ |
+| metadata.annotations:<br />service.beta.kubernetes.io/cds-load-balancer-protocol | http \| tcp                        | 创建的 LoadBalancer 网络协议，仅支持 http 和 tcp             |
+| metadata.annotations:<br />service.beta.kubernetes.io/cds-load-balancer-size | large \| normal \| medium \| small | LoadBalancer 规格说明如下：<br />large - <br />normal - <br />medium - <br />small - |
+| metadata.annotations:<br />service.beta.kubernetes.io/cds-load-balancer-max-connection | 20000                              | LoadBalancer 连接数设定：<br />large 最大支持 500000<br />normal 最大支持 300000<br />medium 最大支持 150000<br />small 最大支持 50000 |
+| spec.ports.protocol                                          | TCP                                | 目前仅支持 TCP                                               |
 
 ## 使用示例
 
