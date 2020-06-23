@@ -39,9 +39,9 @@ spec:
 
 ## LoadBalancer  名字与 service 名字对应关系说明
 
-serviceName(14位) + serviceNameSpace(8位) + serviceUid(8位) 做为 LoadBalancer 的名字
+serviceName + serviceUid 做为 LoadBalancer 的名字
 
-如上例 service.yaml 对应的 LoadBalancer 名字为： lb-tcp-default-58d0d5e2
+如上例 service.yaml 对应的 LoadBalancer 名字为： lb-tcp-58d0d5e2
 
 
 
