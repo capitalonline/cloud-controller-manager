@@ -1,0 +1,5 @@
+bases:
+- ../rbac
+
+resources:
+- cloud-controller-manager.yaml

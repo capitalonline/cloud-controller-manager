@@ -10,6 +10,7 @@ import (
 	"k8s.io/kubernetes/cmd/cloud-controller-manager/app"
 
 	"github.com/capitalonline/cloud-controller-manager/pkg/ccm"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	// Set static flags for which we know the values.
 	command.Flags().VisitAll(func(fl *pflag.Flag) {
 		var err error
+		log.Infof("main:: fl.Name is: %s", fl.Name)
 		switch fl.Name {
 		case "allow-untagged-cloud",
 			// Untagged clouds must be enabled explicitly as they were once marked
@@ -43,11 +45,6 @@ func main() {
 		}
 	})
 
-	// (The following comment is copied from upstream:)
-	// TODO: once we switch everything over to Cobra commands, we can go back to calling
-	// utilflag.InitFlags() (by removing its pflag.Parse() call). For now, we have to set the
-	// normalize func and add the go flag set by hand.
-	// utilflag.InitFlags()
 	logs.InitLogs()
 	defer logs.FlushLogs()
 
