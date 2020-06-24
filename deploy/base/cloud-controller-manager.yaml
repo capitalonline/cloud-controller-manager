@@ -31,7 +31,7 @@ spec:
       - key: "node-role.kubernetes.io/master"
         effect: NoSchedule
       containers:
-      - image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:latest
+      - image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:v1.0.1
         name: cds-cloud-controller-manager
         imagePullPolicy: Always
         args:
