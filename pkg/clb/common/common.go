@@ -6,9 +6,11 @@ import (
 
 const (
 	defaultApiHost         = "http://cdsapi.capitalonline.net"
+	defaultApiHostOversea  = "http://cdsapi-us.capitalonline.net"
 	apiHostLiteral         = "CDS_API_HOST"
 	accessKeyIdLiteral     = "CDS_ACCESS_KEY_ID"
 	accessKeySecretLiteral = "CDS_ACCESS_KEY_SECRET"
+	overseaFlag			   = "CDS_OVERSEA"
 	cckProductType         = "cck"
 	version                = "2019-08-08"
 	signatureVersion       = "1.0"
@@ -50,7 +52,11 @@ func init() {
 		AccessKeySecret = os.Getenv(accessKeySecretLiteral)
 	}
 
-	if APIHost == "" {
+	// True is oversea cluster; False is domestic cluster
+	if os.Getenv(overseaFlag) == "True" &&  APIHost == "" {
+		APIHost = defaultApiHostOversea
+	} else if os.Getenv(overseaFlag) == "False" &&  APIHost == "" {
 		APIHost = defaultApiHost
 	}
+
 }
