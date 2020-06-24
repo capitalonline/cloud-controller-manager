@@ -61,3 +61,8 @@ spec:
             configMapKeyRef:
               name: cds-properties
               key: site_id
+        - name: CDS_OVERSEA
+          valueFrom:
+            configMapKeyRef:
+              name: cds-properties
+              key: oversea
