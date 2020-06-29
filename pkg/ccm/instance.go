@@ -84,6 +84,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
 	if err != nil {
 		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
+		return "", err
 	}
 	log.Infof("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
 
@@ -133,6 +134,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		_, err = i.k8sClient.CoreV1().Nodes().Update(node)
 		if err != nil {
 			log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+			return "", err
 		}
 		log.Infof("InstanceTypeByProviderID:: taintSliceTmp is: %+v", taintSliceTmp)
 		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %+v", node.Spec.Taints)
