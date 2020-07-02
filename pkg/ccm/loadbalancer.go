@@ -271,9 +271,14 @@ func updateClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes [
 
 	// get service annotations
 	var annotationsSliceTmp []string
-	for key, value := range service.ObjectMeta.Annotations {
-		stringTmp := key + ":" + value
-		annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
+	if len(service.ObjectMeta.Annotations) != 0 {
+		for key, value := range service.ObjectMeta.Annotations {
+			stringTmp := key + ":" + value
+			annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
+		}
+
+	} else {
+		annotationsSliceTmp = append(annotationsSliceTmp, "")
 	}
 	log.Infof("updateClassicLoadBalancer:: annotationsSliceTmp is: %s", annotationsSliceTmp)
 
@@ -331,11 +336,17 @@ func createClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes [
 
 	// get service annotations
 	var annotationsSliceTmp []string
-	for key, value := range service.ObjectMeta.Annotations {
-		stringTmp := key + ":" + value
-		annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
+
+	if len(service.ObjectMeta.Annotations) != 0 {
+		for key, value := range service.ObjectMeta.Annotations {
+			stringTmp := key + ":" + value
+			annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
+		}
+
+	} else {
+		annotationsSliceTmp = append(annotationsSliceTmp, "")
 	}
-	log.Infof("createClassicLoadBalancer:: annotationsSliceTmp is: %s", annotationsSliceTmp)
+	log.Infof("updateClassicLoadBalancer:: annotationsSliceTmp is: %s", annotationsSliceTmp)
 
 	// to create loadBalancer
 	res, err := clb.CreateLoadBalancers(&clb.CreateLoadBalancersArgs{
