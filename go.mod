@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/dbdd4us/qcloudapi-sdk-go v0.0.0-20190530123522-c8d9381de48c // indirect
+	github.com/getsentry/sentry-go v0.7.0 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/pflag v1.0.5
