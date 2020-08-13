@@ -3,6 +3,7 @@ package ccm
 import (
 	"context"
 	"errors"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -84,12 +85,14 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
 	if err != nil {
 		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err))
 		return "", err
 	}
 	log.Infof("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
 
 	if res.Data.NodeName == "" {
 		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+		SentrySendError(fmt.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty"))
 		return "", errors.New("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
 	}
 
@@ -98,6 +101,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	node, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error, err is: %s", err)
+		SentrySendError(fmt.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error, err is: %s", err))
 		return "", errors.New("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Get to get node labels error")
 	}
 
@@ -134,6 +138,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		_, err = i.k8sClient.CoreV1().Nodes().Update(node)
 		if err != nil {
 			log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+			SentrySendError(fmt.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err))
 			return "", err
 		}
 		log.Infof("InstanceTypeByProviderID:: taintSliceTmp is: %+v", taintSliceTmp)
@@ -167,9 +172,11 @@ func (i *instances) InstanceExistsByProviderID(ctx context.Context, providerID s
 	if !ok {
 		if err != nil {
 			log.Errorf("InstanceExistsByProviderID:: instance with unknown error")
+			SentrySendError(fmt.Errorf("InstanceExistsByProviderID:: instance with unknown error"))
 			return false, err
 		}
 		log.Errorf("InstanceExistsByProviderID:: instance is not exist")
+		SentrySendError(fmt.Errorf("InstanceExistsByProviderID:: instance is not exist"))
 		return false, nil
 	}
 	log.Infof("InstanceExistsByProviderID:: instance is exist")

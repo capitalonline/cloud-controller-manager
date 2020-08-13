@@ -3,6 +3,7 @@ package ccm
 import (
 	"context"
 	"errors"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	"k8s.io/cloud-provider"
@@ -58,9 +59,11 @@ func (l *loadBalancers) GetLoadBalancer(ctx context.Context, clusterName string,
 	if err != nil {
 		if err == clb.ErrCloudLoadBalancerNotFound {
 			log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer  is not exist")
+			SentrySendError(fmt.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName, loadBalancer  is not exist"))
 			return nil, false, nil
 		}
 		log.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("GetLoadBalancer:: cloud.getLoadBalancerByName is error, err is: %s", err))
 		return nil, false, err
 	}
 	log.Infof("GetLoadBalancer:: cloud.getLoadBalancerByName, res is: %+v", loadBalancer)
@@ -94,6 +97,7 @@ func (l *loadBalancers) GetLoadBalancerName(ctx context.Context, clusterName str
 		return res.Data.Name
 	}
 	log.Errorf("GetLoadBalancerName:: getLoadBalancerByName is error, err is: %s", err)
+	SentrySendError(fmt.Errorf("GetLoadBalancerName:: getLoadBalancerByName is error, err is: %s", err))
 	return err.Error()
 }
 
@@ -107,6 +111,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 	}
 	if service.Spec.SessionAffinity != v1.ServiceAffinityNone {
 		log.Errorf("EnsureLoadBalancer:: SessionAffinity is not supported currently, only support 'None' type")
+		SentrySendError(fmt.Errorf("EnsureLoadBalancer:: SessionAffinity is not supported currently, only support 'None' type"))
 		return nil, errors.New("SessionAffinity is not supported currently, only support 'None' type")
 	}
 
@@ -126,6 +131,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 			loadBalancerExist = false
 		} else {
 			log.Errorf("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is error, err is: %s", err)
+			SentrySendError(fmt.Errorf("EnsureLoadBalancer:: step-1 cloud.getLoadBalancerByName is error, err is: %s", err))
 			return nil, err
 		}
 
@@ -142,11 +148,13 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 			err := updateClassicLoadBalancer(ctx, service, nodes, clusterID)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.updateClassicLoadBalancer is error, err is: %s", err)
+				SentrySendError(fmt.Errorf("EnsureLoadBalancer:: step-2 cloud.updateClassicLoadBalancer is error, err is: %s", err))
 				return nil, err
 			}
 			log.Infof("EnsureLoadBalancer:: step-2 cloud.updateClassicLoadBalancer succeed")
 		default:
 			log.Errorf("EnsureLoadBalancer:: Unsupported loadbalancer kind, only support [classic] yet")
+			SentrySendError(fmt.Errorf("EnsureLoadBalancer:: Unsupported loadbalancer kind, only support [classic] yet"))
 			return nil, errors.New("Unsupported loadbalancer kind, only support [classic] yet")
 		}
 	} else {
@@ -157,6 +165,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 			err := createClassicLoadBalancer(ctx, service, nodes, clusterID)
 			if err != nil {
 				log.Errorf("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer is error, err is: %s", err)
+				SentrySendError(fmt.Errorf("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer is error, err is: %s", err))
 				return nil, err
 			}
 			log.Infof("EnsureLoadBalancer:: step-2 cloud.createClassicLoadBalancer succeed")
@@ -170,6 +179,7 @@ func (l *loadBalancers) EnsureLoadBalancer(ctx context.Context, clusterName stri
 	loadBalancerVerify, err := getLoadBalancerByName(clusterID, serviceName, serviceNameSpace, serviceUid)
 	if err != nil {
 		log.Errorf("EnsureLoadBalancer:: step-3 cloud.getLoadBalancerByName is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("EnsureLoadBalancer:: step-3 cloud.getLoadBalancerByName is error, err is: %s", err))
 		return nil, err
 	}
 	log.Infof("EnsureLoadBalancer:: step-3 cloud.getLoadBalancerByName, res is: %+v", loadBalancerVerify)
@@ -199,6 +209,7 @@ func (l *loadBalancers) UpdateLoadBalancer(ctx context.Context, clusterName stri
 		err := updateClassicLoadBalancer(ctx, service, nodes, clusterID)
 		if err != nil {
 			log.Errorf("UpdateLoadBalancer:: cloud.updateClassicLoadBalancer is error, err is: %s", err)
+			SentrySendError(fmt.Errorf("UpdateLoadBalancer:: cloud.updateClassicLoadBalancer is error, err is: %s", err))
 			return err
 		}
 	default:
@@ -384,6 +395,7 @@ func deleteLoadBalancer(ctx context.Context, clusterID, serviceName, serviceName
 			return nil
 		}
 		log.Errorf("deleteLoadBalancer:: cloud.getLoadBalancerByName is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("deleteLoadBalancer:: cloud.getLoadBalancerByName is error, err is: %s", err))
 		return err
 	}
 	log.Infof("deleteLoadBalancer:: cloud.getLoadBalancerByName, res is: %+v, then to delete it", res)
@@ -419,6 +431,7 @@ func describeLoadBalancersTaskResult(taskID string) error {
 			TaskID: taskID,
 		})
 		if err != nil {
+			SentrySendError(fmt.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is error, err is:%s", err))
 			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult is error, err is:%s", err)
 		}
 		if res.Data.Status == "doing" {
@@ -428,9 +441,11 @@ func describeLoadBalancersTaskResult(taskID string) error {
 			return nil
 		} else if res.Data.Status == "error" {
 			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult error, status is: %s", res.Data.Status)
+			SentrySendError(fmt.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult error, status is: %s", res.Data.Status))
 			return errors.New("clb.DescribeLoadBalancersTaskResult error")
 		} else {
 			log.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult time out, running more than 10 minutes")
+			SentrySendError(fmt.Errorf("DescribeLoadBalancersTaskResult:: clb.DescribeLoadBalancersTaskResult time out, running more than 10 minutes"))
 			return errors.New("clb.DescribeLoadBalancersTaskResult time out, running more than 20 minutes")
 		}
 

@@ -2,6 +2,7 @@ package ccm
 
 import (
 	"context"
+	"fmt"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/cloud-provider"
@@ -43,6 +44,7 @@ func (z zones) GetZoneByProviderID(ctx context.Context, providerID string) (clou
 	res, err := getZoneByProviderID(clusterID, providerID)
 	if err != nil {
 		log.Errorf("GetZoneByProviderID:: getZoneByProviderID is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("GetZoneByProviderID:: getZoneByProviderID is error, err is: %s", err))
 	}
 
 	region := res.Data.Region
@@ -60,6 +62,7 @@ func (z zones) GetZoneByNodeName(ctx context.Context, nodeName types.NodeName) (
 	res, err := z.k8sClient.CoreV1().Nodes().Get(string(nodeName), metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("GetZoneByNodeName:: k8sClient.CoreV1().Nodes().Get to get node's providerID is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("GetZoneByNodeName:: k8sClient.CoreV1().Nodes().Get to get node's providerID is error, err is: %s", err))
 		return  cloudprovider.Zone{Region: ""}, err
 	}
 	providerID := res.Spec.ProviderID
@@ -68,6 +71,7 @@ func (z zones) GetZoneByNodeName(ctx context.Context, nodeName types.NodeName) (
 	res2, err2 := getZoneByProviderID(clusterID, providerID)
 	if err2 != nil {
 		log.Errorf("GetZoneByProviderID:: getZoneByProviderID is error, err is: %s", err)
+		SentrySendError(fmt.Errorf("GetZoneByProviderID:: getZoneByProviderID is error, err is: %s", err))
 		return  cloudprovider.Zone{Region: ""}, err2
 	}
 

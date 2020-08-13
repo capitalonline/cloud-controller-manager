@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/capitalonline/cloud-controller-manager/pkg/ccm"
 	"github.com/capitalonline/cloud-controller-manager/pkg/clb/common"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -19,15 +20,19 @@ func DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*DescribeLoadBalanc
 	log.Infof("api:: DescribeLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionDescribeHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		if strings.Contains(string(content), "DataNotExists") {
 			return nil, ErrCloudLoadBalancerNotFound
 		}
@@ -44,15 +49,19 @@ func CreateLoadBalancers(args *CreateLoadBalancersArgs) (*CreateLoadBalancerResp
 	log.Infof("api:: CreateLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -66,15 +75,19 @@ func UpdateLoadBalancers(args *UpdateLoadBalancersArgs) (*UpdateLoadBalancerResp
 	log.Infof("api:: UpdateLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionUpdateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -88,15 +101,19 @@ func DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersRes
 	log.Infof("api:: DeleteLoadBalancers")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionDeleteHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -110,15 +127,19 @@ func DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) 
 	log.Infof("api:: DescribeLoadBalancersTaskResult")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionCheckHaproxyLoadBalancerTaskStatus, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -132,15 +153,19 @@ func DescribeInstancesLabelsAndNodeName(args *DescribeInstancesLabelsAndNodeName
 	log.Infof("api:: DescribeInstancesLabelsAndNodeName")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionDescribeInstancesLabelsAndNodeName, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -154,15 +179,19 @@ func DescribeInstanceExistsByProviderID(args *DescribeInstanceExistsByProviderID
 	log.Infof("api:: DescribeInstanceExistsByProviderID")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionDescribeNodeInstanceStatus, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
@@ -176,15 +205,19 @@ func DescribeZoneByProviderID(args *DescribeZoneByProviderIDArgs) (*DescribeZone
 	log.Infof("api:: DescribeZoneByProviderID")
 	body, err := common.MarshalJsonToIOReader(args)
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	req, err := common.NewCCKRequest(common.ActionCreateHaproxyLoadBalancerInstance, http.MethodPost, nil, body)
 	response, err := common.DoRequest(req)
+	defer response.Body.Close()
 	if err != nil {
+		ccm.SentrySendError(err)
 		return nil, err
 	}
 	content, err := ioutil.ReadAll(response.Body)
 	if response.StatusCode >= 400 {
+		ccm.SentrySendError(err)
 		return nil, fmt.Errorf("http error:%s, %s", response.Status, string(content))
 	}
 
