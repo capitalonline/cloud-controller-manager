@@ -3,4 +3,4 @@ bases:
 
 images:
 - name: registry-bj.capitalonline.net/cck/cloud-controller-manager
-  newTag: v1.0.1
+  newTag: v1.0.4

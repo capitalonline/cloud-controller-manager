@@ -135,7 +135,7 @@ spec:
             configMapKeyRef:
               key: oversea
               name: cds-properties
-        image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:v1.0.2
+        image: registry-bj.capitalonline.net/cck/cdscloud-controller-manager:v1.0.3
         imagePullPolicy: Always
         name: cds-cloud-controller-manager
         resources:
