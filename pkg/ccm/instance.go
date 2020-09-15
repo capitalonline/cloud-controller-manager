@@ -114,6 +114,14 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 				log.Infof("InstanceTypeByProviderID:: set node.ObjectMeta.Labels is: %s", label)
 			}
 		}
+		// update nodes
+		_, err = i.k8sClient.CoreV1().Nodes().Update(node)
+		if err != nil {
+			log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+			return "", err
+		}
+		log.Infof("InstanceTypeByProviderID: update node's label succeed!")
+		log.Infof("InstanceTypeByProviderID:: node.ObjectMeta.Labels are: %+v", node.ObjectMeta.Labels)
 	}
 
 	// set taints
@@ -128,6 +136,8 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 			}
 			taintSliceTmp = append(taintSliceTmp, taintStructTmp)
 		}
+
+		log.Infof("InstanceTypeByProviderID:: taintSliceTmp is: %+v", taintSliceTmp)
 		node.Spec.Taints = taintSliceTmp
 
 		// update nodes
@@ -136,8 +146,8 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 			log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
 			return "", err
 		}
-		log.Infof("InstanceTypeByProviderID:: taintSliceTmp is: %+v", taintSliceTmp)
-		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints is: %+v", node.Spec.Taints)
+		log.Infof("InstanceTypeByProviderID: update node's taints succeed!")
+		log.Infof("InstanceTypeByProviderID:: node.Spec.Taints are: %+v", node.Spec.Taints)
 	}
 
 	// returnInstanceTypeValue := "cds.vm.8c.8g"
