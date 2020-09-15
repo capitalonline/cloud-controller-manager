@@ -1,6 +1,6 @@
 PKG=github.com/capitalonline/cloud-controller-manager
 IMAGE?=registry-bj.capitalonline.net/cck/cloud-controller-manager
-VERSION=v1.0.1
+VERSION=v1.0.4
 CCM_DEPLOY_PATH=./deploy
 CCM_KUSTOMIZATION_RELEASE_PATH=${CCM_DEPLOY_PATH}/overlays/release
 CCM_KUSTOMIZATION_RELEASE_FILE=${CCM_KUSTOMIZATION_RELEASE_PATH}/kustomization.yaml
