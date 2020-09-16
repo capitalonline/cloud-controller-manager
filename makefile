@@ -1,5 +1,6 @@
 PKG=github.com/capitalonline/cloud-controller-manager
-IMAGE?=registry-bj.capitalonline.net/cck/cloud-controller-manager
+IMAGE?=registry-bj.capitalonline.net/cck/cdscloud-controller-manager
+OVERSEA_IMAGE?=capitalonline/cdscloud-controller-manager
 VERSION=v1.0.4
 CCM_DEPLOY_PATH=./deploy
 CCM_KUSTOMIZATION_RELEASE_PATH=${CCM_DEPLOY_PATH}/overlays/release
@@ -21,6 +22,7 @@ container-binary:
 .PHONY: image-release
 image-release:
 	docker build -t $(IMAGE):$(VERSION) .
+	docker build -t $(OVERSEA_IMAGE):$(VERSION) .
 
 .PHONY: image
 image:
@@ -29,6 +31,8 @@ image:
 .PHONY: release
 release: image-release
 	docker push $(IMAGE):$(VERSION)
+	docker push $(OVERSEA_IMAGE):$(VERSION)
+
 
 .PHONY: sync-version
 sync-version:
