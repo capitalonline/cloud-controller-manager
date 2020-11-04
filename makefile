@@ -1,7 +1,7 @@
 PKG=github.com/capitalonline/cloud-controller-manager
 IMAGE?=registry-bj.capitalonline.net/cck/cdscloud-controller-manager
 OVERSEA_IMAGE?=capitalonline/cdscloud-controller-manager
-VERSION=v1.0.4
+VERSION=v1.0.5
 CCM_DEPLOY_PATH=./deploy
 CCM_KUSTOMIZATION_RELEASE_PATH=${CCM_DEPLOY_PATH}/overlays/release
 CCM_KUSTOMIZATION_RELEASE_FILE=${CCM_KUSTOMIZATION_RELEASE_PATH}/kustomization.yaml
