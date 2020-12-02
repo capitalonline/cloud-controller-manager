@@ -68,29 +68,29 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	// get node's address by providerID
 
 	var nodeAddressStructTmp v1.NodeAddress
-	//// init internal ip
-	//if res.Data.InternalIPs != nil {
-	//	for _, internalIP := range res.Data.InternalIPs {
-	//		nodeAddressStructTmp.Type = v1.NodeAddressType("InternalIP")
-	//		nodeAddressStructTmp.Address = internalIP
-	//	}
-	//}
-	//
-	//// init external ip
-	//if res.Data.ExternalIPs != nil {
-	//	for _, externalIP := range res.Data.ExternalIPs {
-	//		nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
-	//		nodeAddressStructTmp.Address = externalIP
-	//	}
-	//}
-	//
-	//// init hostname
-	//if res.Data.NodeName != "" {
-	//	nodeAddressStructTmp.Type = v1.NodeAddressType("Hostname")
-	//	nodeAddressStructTmp.Address = res.Data.NodeName
-	//}
-	nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
-	nodeAddressStructTmp.Address = "117.168.192.110"
+	// init internal ip
+	if res.Data.InternalIPs != nil {
+		for _, internalIP := range res.Data.InternalIPs {
+			nodeAddressStructTmp.Type = v1.NodeAddressType("InternalIP")
+			nodeAddressStructTmp.Address = internalIP
+		}
+	}
+
+	// init external ip
+	if res.Data.ExternalIPs != nil {
+		for _, externalIP := range res.Data.ExternalIPs {
+			nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
+			nodeAddressStructTmp.Address = externalIP
+		}
+	}
+
+	// init hostname
+	if res.Data.NodeName != "" {
+		nodeAddressStructTmp.Type = v1.NodeAddressType("Hostname")
+		nodeAddressStructTmp.Address = res.Data.NodeName
+	}
+	//nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
+	//nodeAddressStructTmp.Address = "117.168.192.110"
 
 	// update node status
 	log.Infof("NodeAddressesByProviderID: nodeAddressStructTmp is: %+v", nodeAddressStructTmp)
