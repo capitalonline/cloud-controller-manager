@@ -68,11 +68,13 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	// get node's address by providerID
 
 	var nodeAddressStructTmp v1.NodeAddress
+	var nodeSliceTmp []v1.NodeAddress
 	// init internal ip
 	if res.Data.InternalIPs != nil {
 		for _, internalIP := range res.Data.InternalIPs {
 			nodeAddressStructTmp.Type = v1.NodeAddressType("InternalIP")
 			nodeAddressStructTmp.Address = internalIP
+			nodeSliceTmp = append(nodeSliceTmp, nodeAddressStructTmp)
 		}
 	}
 
@@ -81,6 +83,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 		for _, externalIP := range res.Data.ExternalIPs {
 			nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
 			nodeAddressStructTmp.Address = externalIP
+			nodeSliceTmp = append(nodeSliceTmp, nodeAddressStructTmp)
 		}
 	}
 
@@ -88,13 +91,14 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	if res.Data.NodeName != "" {
 		nodeAddressStructTmp.Type = v1.NodeAddressType("Hostname")
 		nodeAddressStructTmp.Address = res.Data.NodeName
+		nodeSliceTmp = append(nodeSliceTmp, nodeAddressStructTmp)
 	}
 	//nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
 	//nodeAddressStructTmp.Address = "117.168.192.110"
 
 	// update node status
-	log.Infof("NodeAddressesByProviderID: nodeAddressStructTmp is: %+v", nodeAddressStructTmp)
-	nodeAddress.Status.Addresses = append(nodeAddress.Status.Addresses, nodeAddressStructTmp)
+	log.Infof("NodeAddressesByProviderID: nodeSliceTmp is: %+v", nodeSliceTmp)
+	nodeAddress.Status.Addresses = nodeSliceTmp
 	_, err = i.k8sClient.CoreV1().Nodes().Update(nodeAddress)
 	if err != nil {
 		log.Errorf("NodeAddressesByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
