@@ -43,10 +43,70 @@ func (i *instances) NodeAddresses(ctx context.Context, nodeName types.NodeName) 
 // identified by providerID. Only the public/private IPv4 addresses will be
 // considered for now.
 func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID string) ([]v1.NodeAddress, error) {
+	clusterID := i.resources.clusterID
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
-	log.Infof("not support yet")
+	// get node nodeName
+	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
+	if err != nil {
+		log.Errorf("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
+		return nil, err
+	}
+	log.Infof("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
 
-	return nil, nil
+	//if res.Data.NodeName == "" {
+	//	log.Errorf("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+	//	return nil, errors.New("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
+	//}
+	//
+	//// get cluster node address
+	//nodeAddress, err := i.k8sClient.CoreV1().Nodes().Get(res.Data.NodeName, metav1.GetOptions{})
+	//if err != nil {
+	//	log.Errorf("NodeAddressesByProviderID:: k8sClient.CoreV1().Nodes().Get to get node address error, err is: %s", err)
+	//	return nil, errors.New("NodeAddressesByProviderID:: k8sClient.CoreV1().Nodes().Get to get node address error")
+	//}
+
+	// get node's address by providerID
+
+	var nodeAddressStruct v1.NodeAddress
+	var nodeAddressSlice []v1.NodeAddress
+	// init internal ip
+	if res.Data.InternalIPs != nil {
+		for _, internalIP := range res.Data.InternalIPs {
+			nodeAddressStruct.Type = v1.NodeAddressType("InternalIP")
+			nodeAddressStruct.Address = internalIP
+			nodeAddressSlice = append(nodeAddressSlice, nodeAddressStruct)
+		}
+	}
+
+	// init external ip
+	if res.Data.ExternalIPs != nil {
+		for _, externalIP := range res.Data.ExternalIPs {
+			nodeAddressStruct.Type = v1.NodeAddressType("ExternalIP")
+			nodeAddressStruct.Address = externalIP
+			nodeAddressSlice = append(nodeAddressSlice, nodeAddressStruct)
+		}
+	}
+
+	// init hostname
+	if res.Data.NodeName != "" {
+		nodeAddressStruct.Type = v1.NodeAddressType("Hostname")
+		nodeAddressStruct.Address = res.Data.NodeName
+		nodeAddressSlice = append(nodeAddressSlice, nodeAddressStruct)
+	}
+	//nodeAddressStructTmp.Type = v1.NodeAddressType("ExternalIP")
+	//nodeAddressStructTmp.Address = "117.168.192.110"
+
+	// update node status
+	log.Infof("NodeAddressesByProviderID: nodeAddressSlice is: %+v", nodeAddressSlice)
+	//nodeAddress.Status.Addresses = nodeSliceTmp
+	//_, err = i.k8sClient.CoreV1().Nodes().Update(nodeAddress)
+	//if err != nil {
+	//	log.Errorf("NodeAddressesByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+	//	return nil, err
+	//}
+
+	log.Infof("NodeAddressesByProviderID: succeed!")
+	return nodeAddressSlice, nil
 }
 
 // ExternalID returns the cloud provider ID of the droplet identified by
