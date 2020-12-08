@@ -70,7 +70,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	var nodeAddressStruct v1.NodeAddress
 	var nodeAddressSlice []v1.NodeAddress
 	// init internal ip
-	if res.Data.InternalIPs != nil {
+	if len(res.Data.InternalIPs) != 0 {
 		for _, internalIP := range res.Data.InternalIPs {
 			nodeAddressStruct.Type = v1.NodeAddressType("InternalIP")
 			nodeAddressStruct.Address = internalIP
@@ -79,7 +79,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	}
 
 	// init external ip
-	if res.Data.ExternalIPs != nil {
+	if len(res.Data.ExternalIPs) != 0 {
 		for _, externalIP := range res.Data.ExternalIPs {
 			nodeAddressStruct.Type = v1.NodeAddressType("ExternalIP")
 			nodeAddressStruct.Address = externalIP
