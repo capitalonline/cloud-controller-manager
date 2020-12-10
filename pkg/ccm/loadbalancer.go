@@ -343,10 +343,8 @@ func createClassicLoadBalancer(ctx context.Context, service *v1.Service, nodes [
 			annotationsSliceTmp = append(annotationsSliceTmp, stringTmp)
 		}
 
-	} else {
-		annotationsSliceTmp = append(annotationsSliceTmp, "")
 	}
-	log.Infof("updateClassicLoadBalancer:: annotationsSliceTmp is: %s", annotationsSliceTmp)
+	log.Infof("updateClassicLoadBalancer:: annotationsSliceTmp is: %+v", annotationsSliceTmp)
 
 	// to create loadBalancer
 	res, err := clb.CreateLoadBalancers(&clb.CreateLoadBalancersArgs{
