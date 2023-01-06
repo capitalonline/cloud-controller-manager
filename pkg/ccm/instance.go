@@ -183,6 +183,25 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		log.Infof("InstanceTypeByProviderID: update node's label succeed!")
 		log.Infof("InstanceTypeByProviderID:: node.ObjectMeta.Labels are: %+v", nodeLabels.ObjectMeta.Labels)
 	}
+	
+	// set Annotations
+	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+	if len(res.Data.Annotations) != 0 {
+		for _, annotation := range res.Data.Annotations {
+			for key, value := range label {
+				nodeAnnotations.ObjectMeta.Annotations[key] = value
+				log.Infof("InstanceTypeByProviderID:: nodeLabels.ObjectMeta.Annotations: %s", annotation)
+			}
+		}
+		// update nodes
+		_, err = i.k8sClient.CoreV1().Nodes().Update(nodeAnnotations)
+		if err != nil {
+			log.Errorf("InstanceTypeByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+			return "", err
+		}
+		log.Infof("InstanceTypeByProviderID: update node's annotation succeed!")
+		log.Infof("InstanceTypeByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
+	}
 
 	// set taints
 	// to fix "the object has been modified; please apply your changes to the latest version and try again" issue
