@@ -188,7 +188,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	if len(res.Data.Annotations) != 0 {
 		for _, annotation := range res.Data.Annotations {
-			for key, value := range label {
+			for key, value := range annotation {
 				nodeAnnotations.ObjectMeta.Annotations[key] = value
 				log.Infof("InstanceTypeByProviderID:: nodeLabels.ObjectMeta.Annotations: %s", annotation)
 			}
