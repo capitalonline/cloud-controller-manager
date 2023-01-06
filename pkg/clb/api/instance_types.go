@@ -7,6 +7,7 @@ type DescribeInstancesLabelsAndNodeNameArgs struct {
 type DescribeInstancesLabelsAndNodeNameResponse struct {
 	Response
 	Data struct {
+		Annotations []map[string]string `json:"annotations"`
 		Labels      []map[string]string `json:"labels"`
 		NodeName    string              `json:"node_name"`
 		Taints      []map[string]string `json:"taints"`
