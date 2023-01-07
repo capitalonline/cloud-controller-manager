@@ -42,7 +42,7 @@ func (i *instances) NodeAddresses(ctx context.Context, nodeName types.NodeName) 
 // NodeAddressesByProviderID returns all the valid addresses of the droplet
 // identified by providerID. Only the public/private IPv4 addresses will be
 // considered for now.
-func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID string, nodeName types.NodeName) ([]v1.NodeAddress, error) {
+func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID string, nodeName string) ([]v1.NodeAddress, error) {
 	clusterID := i.resources.clusterID
 	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	log.Infof("NodeAddressesByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
