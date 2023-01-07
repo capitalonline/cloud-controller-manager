@@ -57,7 +57,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
 	// get node nodeName
-	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
+	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID, snatIp)
 	if err != nil {
 		log.Errorf("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
 		return nil, err
@@ -152,7 +152,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	clusterID := i.resources.clusterID
 	log.Infof("InstanceTypeByProviderID:: clusterID is: %s, providerID is: %s", clusterID, providerID)
 	// get node labels and nodeName
-	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
+	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID, "")
 	if err != nil {
 		log.Errorf("InstanceTypeByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
 		return "", err
