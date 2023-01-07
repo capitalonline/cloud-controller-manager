@@ -49,9 +49,10 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	log.Infof("NodeAddressesByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
 	for _, annotation := range nodeAnnotations.ObjectMeta.Annotations {
 		for key, value := range annotation {
-			if key == "snat.beta.kubernetes.io/snat-ip" {
-				log.Infof("key:value:::::%s::%s", key, value)
-			}
+			log.Infof("key:value:::::%s::%s", key, value)
+// 			if key == "snat.beta.kubernetes.io/snat-ip" {
+// 				log.Infof("key:value:::::%s::%s", key, value)
+// 			}
 		}
 	}
 	log.Infof("snatIp:: %s", snatIp)
