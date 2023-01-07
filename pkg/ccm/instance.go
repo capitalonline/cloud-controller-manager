@@ -47,14 +47,8 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	snatIp := ""
 	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	log.Infof("NodeAddressesByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
-	for _, annotation := range nodeAnnotations.ObjectMeta.Annotations {
-		log.Infof("annotation:::::::%+v", annotation)
-// 		for key, value := range annotation {
-// 			log.Infof("key:value:::::%s::%s", key, value)
-// 			if key == "snat.beta.kubernetes.io/snat-ip" {
-// 				log.Infof("key:value:::::%s::%s", key, value)
-// 			}
-// 		}
+	for key, value := range nodeAnnotations.ObjectMeta.Annotations {
+		log.Infof("annotation:::::::%s====%s", key, value)
 	}
 	log.Infof("snatIp:: %s", snatIp)
 	
