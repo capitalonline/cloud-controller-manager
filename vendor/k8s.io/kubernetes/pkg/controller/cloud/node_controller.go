@@ -474,7 +474,7 @@ func ensureNodeExistsByProviderID(ctx context.Context, instances cloudprovider.I
 }
 
 func getNodeAddressesByProviderIDOrName(ctx context.Context, instances cloudprovider.Instances, node *v1.Node) ([]v1.NodeAddress, error) {
-	nodeAddresses, err := instances.NodeAddressesByProviderID(ctx, node.Spec.ProviderID, types.NodeName(node.Name))
+	nodeAddresses, err := instances.NodeAddressesByProviderID(ctx, node.Spec.ProviderID, node.Name)
 	if err != nil {
 		providerIDErr := err
 		nodeAddresses, err = instances.NodeAddresses(ctx, types.NodeName(node.Name))
