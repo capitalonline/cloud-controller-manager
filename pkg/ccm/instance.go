@@ -44,6 +44,8 @@ func (i *instances) NodeAddresses(ctx context.Context, nodeName types.NodeName) 
 // considered for now.
 func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID string) ([]v1.NodeAddress, error) {
 	clusterID := i.resources.clusterID
+	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
+	log.Infof("NodeAddressesByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
 	// get node nodeName
 	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID)
