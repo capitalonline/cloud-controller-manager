@@ -54,7 +54,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 // 			if key == "snat.beta.kubernetes.io/snat-ip" {
 // 				log.Infof("key:value:::::%s::%s", key, value)
 // 			}
-		}
+// 		}
 	}
 	log.Infof("snatIp:: %s", snatIp)
 	
