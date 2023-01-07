@@ -166,7 +166,7 @@ type Instances interface {
 	// ProviderID is a unique identifier of the node. This will not be called
 	// from the node whose nodeaddresses are being queried. i.e. local metadata
 	// services cannot be used in this method to obtain nodeaddresses
-	NodeAddressesByProviderID(ctx context.Context, providerID string) ([]v1.NodeAddress, error)
+	NodeAddressesByProviderID(ctx context.Context, providerID string, nodeName string) ([]v1.NodeAddress, error)
 	// InstanceID returns the cloud provider ID of the node with the specified NodeName.
 	// Note that if the instance does not exist, we must return ("", cloudprovider.InstanceNotFound)
 	// cloudprovider.InstanceNotFound should NOT be returned for instances that exist but are stopped/sleeping
