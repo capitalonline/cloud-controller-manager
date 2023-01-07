@@ -50,7 +50,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	for _, annotation := range nodeAnnotations.ObjectMeta.Annotations {
 		for key, value := range annotation {
 			if key == "snat.beta.kubernetes.io/snat-ip" {
-				snatIp = value
+				log.Infof("key:value:::::%s::%s", key, value)
 			}
 		}
 	}
