@@ -49,15 +49,15 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 	log.Infof("NodeAddressesByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
 	for key, value := range nodeAnnotations.ObjectMeta.Annotations {
 		if key == "snat.beta.kubernetes.io/snat-ip" {
-			log.Infof("NodeAddressesByProviderID:: nodeName is %s, snatIp is %s", nodeName, value)
-			snatIp = value
+			log.Infof("NodeAddressesByProviderID:: nodeName is %s, snatNmae is %s", nodeName, value)
+			snatName = value
 		}
 	}
 	log.Infof("snatIp:: %s", snatIp)
 	
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
 	// get node nodeName
-	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID, snatIp)
+	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID, snatName)
 	if err != nil {
 		log.Errorf("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID is error, err is: %s", err)
 		return nil, err
