@@ -3,7 +3,7 @@ package api
 type DescribeInstancesLabelsAndNodeNameArgs struct {
 	ClusterID string `json:"cluster_id"`
 	NodeID    string `json:"node_id"`
-	SnatIp    string `json:"snat_ip"`
+	SnatName  string `json:"snat_name"`
 }
 type DescribeInstancesLabelsAndNodeNameResponse struct {
 	Response
