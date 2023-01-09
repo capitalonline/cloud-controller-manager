@@ -44,7 +44,7 @@ func (i *instances) NodeAddresses(ctx context.Context, nodeName types.NodeName) 
 // considered for now.
 func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID string, nodeName string) ([]v1.NodeAddress, error) {
 	clusterID := i.resources.clusterID
-	snatIp := ""
+	snatName := ""
 	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	log.Infof("NodeAddressesByProviderID:: node.ObjectMeta.Annotations are: %+v", nodeAnnotations.ObjectMeta.Annotations)
 	for key, value := range nodeAnnotations.ObjectMeta.Annotations {
@@ -53,7 +53,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 			snatName = value
 		}
 	}
-	log.Infof("snatIp:: %s", snatIp)
+	log.Infof("NodeAddressesByProviderID::snatIp: %s", snatName)
 	
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
 	// get node nodeName
