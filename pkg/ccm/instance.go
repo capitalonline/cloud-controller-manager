@@ -286,11 +286,11 @@ func (i *instances) InstanceShutdownByProviderID(ctx context.Context, providerID
 	return false, nil
 }
 
-func getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID string, snatIp string)(*clb.DescribeInstancesLabelsAndNodeNameResponse, error){
+func getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID string, snatName string)(*clb.DescribeInstancesLabelsAndNodeNameResponse, error){
 	response, err := clb.DescribeInstancesLabelsAndNodeName(&clb.DescribeInstancesLabelsAndNodeNameArgs{
 		ClusterID: clusterID,
 		NodeID: providerID,
-		SnatIp: snatIp,
+		SnatName: snatName,
 	})
 
 	// api with error
