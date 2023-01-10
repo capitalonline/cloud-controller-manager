@@ -27,7 +27,7 @@ const (
 	ActionCheckHaproxyLoadBalancerTaskStatus  = "CheckHaproxyLoadbalancerTaskStatus"
 
 	// instance
-	ActionDescribeInstancesLabelsAndNodeName = "DescribeInstancesLabelsAndNodeName"
+	ActionDescribeInstancesLabelsAndNodeName = "DescribeInstancesLabelsAndNodeNameV2"
 	ActionDescribeNodeInstanceStatus = "DescribeNodeInstanceStatus"
 )
 
