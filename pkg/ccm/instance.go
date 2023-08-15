@@ -54,7 +54,7 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 		}
 	}
 	log.Infof("NodeAddressesByProviderID::snatIp: %s", snatName)
-	
+
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
 	// get node nodeName
 	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID, snatName)
@@ -133,10 +133,8 @@ func (i *instances) ExternalID(ctx context.Context, nodeName types.NodeName) (st
 
 // InstanceID returns the cloud provider ID of the droplet identified by nodeName.
 func (i *instances) InstanceID(ctx context.Context, nodeName types.NodeName) (string, error) {
-	log.Infof("InstanceID:: nodeName is: %s", nodeName)
-	log.Infof("not support yet")
-
-	return "", nil
+	log.Infof("InstanceID: get don't have ProviderID node, node name is: %s", string(nodeName))
+	return "unknown-" + string(nodeName), nil
 }
 
 // InstanceType returns the type of the droplet identified by name.
@@ -194,7 +192,7 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		log.Infof("InstanceTypeByProviderID: update node's label succeed!")
 		log.Infof("InstanceTypeByProviderID:: node.ObjectMeta.Labels are: %+v", nodeLabels.ObjectMeta.Labels)
 	}
-	
+
 	// set Annotations
 	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	if len(res.Data.Annotations) != 0 {
@@ -265,7 +263,6 @@ func (i *instances) CurrentNodeName(_ context.Context, hostname string) (types.N
 func (i *instances) InstanceExistsByProviderID(ctx context.Context, providerID string) (bool, error) {
 	log.Infof("InstanceExistsByProviderID:: providerID is: %s", providerID)
 	ok, err := describeInstanceExistsByProviderID(providerID)
-
 	if !ok {
 		if err != nil {
 			log.Errorf("InstanceExistsByProviderID:: instance with unknown error")
@@ -286,11 +283,11 @@ func (i *instances) InstanceShutdownByProviderID(ctx context.Context, providerID
 	return false, nil
 }
 
-func getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID string, snatName string)(*clb.DescribeInstancesLabelsAndNodeNameResponse, error){
+func getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID string, snatName string) (*clb.DescribeInstancesLabelsAndNodeNameResponse, error) {
 	response, err := clb.DescribeInstancesLabelsAndNodeName(&clb.DescribeInstancesLabelsAndNodeNameArgs{
 		ClusterID: clusterID,
-		NodeID: providerID,
-		SnatName: snatName,
+		NodeID:    providerID,
+		SnatName:  snatName,
 	})
 
 	// api with error
@@ -314,7 +311,7 @@ func describeInstanceExistsByProviderID(providerID string) (bool, error) {
 	if response.Data.Status == "true" {
 		return true, nil
 	} else if response.Data.Status == "false" {
-		return  false, nil
+		return false, nil
 	} else {
 		return false, errors.New("unknown error")
 	}
