@@ -54,8 +54,8 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 		}
 	}
 	log.Infof("NodeAddressesByProviderID::snatIp: %s", snatName)
-
 	log.Infof("NodeAddressesByProviderID:: providerID is: %s", providerID)
+
 	// get node nodeName
 	res, err := getNodeInstanceTypeAndNodeNameByProviderID(clusterID, providerID, snatName)
 	if err != nil {
@@ -63,6 +63,22 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 		return nil, err
 	}
 	log.Infof("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, res is: %+v", res)
+
+	// 20240117 node updates Annotation in real time and compatible with Cpu bundled core
+	if len(res.Data.Annotations) != 0 {
+		for _, annotation := range res.Data.Annotations {
+			for key, value := range annotation {
+				nodeAnnotations.ObjectMeta.Annotations[key] = value
+				log.Infof("NodeAddressesByProviderID:: Update nodeLabels.ObjectMeta.Annotations: %s", annotation)
+			}
+		}
+	}
+	_, err = i.k8sClient.CoreV1().Nodes().Update(nodeAnnotations)
+	if err != nil {
+		log.Errorf("NodeAddressesByProviderID:: k8sClient.CoreV1().Nodes().Update(node) error, err is: %s", err)
+		return nil, err
+	}
+	log.Infof("NodeAddressesByProviderID: Update Node Annotations Done.")
 
 	//if res.Data.NodeName == "" {
 	//	log.Errorf("NodeAddressesByProviderID:: getNodeInstanceTypeAndNodeNameByProviderID, nodeName is empty")
