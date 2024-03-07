@@ -215,6 +215,11 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 		for _, annotation := range res.Data.Annotations {
 			for key, value := range annotation {
 				nodeAnnotations.ObjectMeta.Annotations[key] = value
+
+				// scale group preemption annotations
+				if key == "autoscaler.kubernetes.io/scale-down-disabled" && value == "" {
+					delete(nodeAnnotations.ObjectMeta.Annotations, key)
+				}
 				log.Infof("InstanceTypeByProviderID:: nodeLabels.ObjectMeta.Annotations: %s", annotation)
 			}
 		}
