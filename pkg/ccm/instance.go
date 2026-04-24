@@ -66,6 +66,10 @@ func (i *instances) NodeAddressesByProviderID(ctx context.Context, providerID st
 
 	// 20240117 node updates Annotation in real time and compatible with Cpu bundled core
 	if len(res.Data.Annotations) != 0 {
+		// init annotations map if nil
+		if nodeAnnotations.ObjectMeta.Annotations == nil {
+			nodeAnnotations.ObjectMeta.Annotations = make(map[string]string)
+		}
 		for _, annotation := range res.Data.Annotations {
 			for key, value := range annotation {
 				nodeAnnotations.ObjectMeta.Annotations[key] = value
@@ -196,6 +200,10 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	// set labels
 	returnInstanceTypeValue := ""
 	if len(res.Data.Labels) != 0 {
+		// init labels map if nil
+		if nodeLabels.ObjectMeta.Labels == nil {
+			nodeLabels.ObjectMeta.Labels = make(map[string]string)
+		}
 		for _, label := range res.Data.Labels {
 			for key, value := range label {
 				if key == "node.kubernetes.io/instance-type" {
@@ -219,6 +227,10 @@ func (i *instances) InstanceTypeByProviderID(ctx context.Context, providerID str
 	// set Annotations
 	nodeAnnotations, err := i.k8sClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	if len(res.Data.Annotations) != 0 {
+		// init annotations map if nil
+		if nodeAnnotations.ObjectMeta.Annotations == nil {
+			nodeAnnotations.ObjectMeta.Annotations = make(map[string]string)
+		}
 		for _, annotation := range res.Data.Annotations {
 			for key, value := range annotation {
 				nodeAnnotations.ObjectMeta.Annotations[key] = value
